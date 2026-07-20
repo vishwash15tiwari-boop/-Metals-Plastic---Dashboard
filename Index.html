@@ -1,0 +1,1580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<base target="_top">
+<meta charset="utf-8">
+<title>OMP Control Tower</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════════════════════════════
+   OMP EXECUTIVE CONTROL TOWER — DESIGN SYSTEM
+   Light, monochrome, Inter, generous whitespace. Color is reserved
+   for meaning only: green = good, red = risk, amber = attention.
+   ════════════════════════════════════════════════════════════════ */
+:root{
+  --bg:#f7f7f8; --surface:#ffffff;
+  --ink:#0f1115; --ink-2:#5c6472; --ink-3:#98a1ae;
+  --line:#e8eaee; --line-2:#f1f2f5;
+  --good:#0b7d55; --good-bg:#e9f6f0;
+  --bad:#c0342c;  --bad-bg:#fbeeed;
+  --warn:#9a6700; --warn-bg:#fbf3e2;
+  --r:14px; --r-sm:9px;
+  --shadow:0 1px 2px rgba(16,20,28,.05);
+  --shadow-2:0 8px 28px rgba(16,20,28,.10);
+  --ease:cubic-bezier(.22,.7,.3,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg); color:var(--ink);
+  font:14px/1.45 "Inter",-apple-system,"Segoe UI",sans-serif;
+  font-feature-settings:"cv11","ss01";
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+}
+.num{font-variant-numeric:tabular-nums}
+h1,h2,h3{font-weight:700;letter-spacing:-.01em}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+input,select{font:inherit;color:inherit}
+::-webkit-scrollbar{height:8px;width:8px}
+::-webkit-scrollbar-thumb{background:#d4d8de;border-radius:8px}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ── Top bar ─────────────────────────────────────────────────── */
+.topbar{
+  position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:18px;
+  padding:10px 28px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.mark{
+  width:34px;height:34px;border-radius:10px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-size:10.5px;font-weight:800;letter-spacing:.04em;flex:none;
+}
+.brand h1{font-size:15.5px;white-space:nowrap}
+.brand p{font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+.badge{
+  font-size:10px;font-weight:700;letter-spacing:.07em;color:var(--warn);
+  background:var(--warn-bg);border:1px solid #efdfba;border-radius:99px;padding:3px 9px;
+}
+.seg{display:flex;background:var(--line-2);border-radius:10px;padding:3px;margin-left:auto}
+.seg button{
+  padding:5px 16px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--ink-2);
+  transition:all .16s var(--ease);white-space:nowrap;
+}
+.seg button.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow)}
+.top-right{display:flex;align-items:center;gap:14px}
+.sync{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--ink-2);white-space:nowrap}
+.dot{width:7px;height:7px;border-radius:50%;background:var(--good);flex:none}
+.dot.pulse{animation:pulse 2.2s infinite}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(11,125,85,.35)}55%{box-shadow:0 0 0 5px rgba(11,125,85,0)}}
+.iconbtn{
+  width:32px;height:32px;border-radius:9px;border:1px solid var(--line);background:var(--surface);
+  display:grid;place-items:center;color:var(--ink-2);transition:all .16s var(--ease);
+}
+.iconbtn:hover{border-color:#c9ced6;color:var(--ink);transform:translateY(-1px)}
+.iconbtn.spin svg{animation:spin .9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Filter bar ──────────────────────────────────────────────── */
+.filterbar{
+  position:sticky;top:55px;z-index:50;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:10px 28px;background:rgba(247,247,248,.88);backdrop-filter:blur(14px);
+  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+}
+.fchip{
+  position:relative;display:flex;align-items:center;gap:7px;padding:6px 11px;
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;cursor:pointer;
+  font-size:12.5px;transition:all .15s var(--ease);user-select:none;
+}
+.fchip:hover{border-color:#c9ced6;transform:translateY(-1px)}
+.fchip label{font-size:10.5px;font-weight:600;color:var(--ink-3);letter-spacing:.03em;cursor:pointer;text-transform:uppercase}
+.fchip .val{font-weight:600;max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fchip.on{background:var(--ink);border-color:var(--ink)}
+.fchip.on label{color:#9aa3b0}
+.fchip.on .val{color:#fff}
+.fchip svg{flex:none;color:var(--ink-3)}
+.fmenu{
+  position:absolute;top:calc(100% + 6px);left:0;z-index:70;min-width:230px;max-width:320px;
+  background:var(--surface);border:1px solid var(--line);border-radius:12px;box-shadow:var(--shadow-2);
+  padding:6px;animation:drop .16s var(--ease);
+}
+@keyframes drop{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.fmenu input{
+  width:100%;padding:7px 10px;margin-bottom:6px;border:1px solid var(--line);border-radius:8px;
+  font-size:12.5px;outline:none;background:var(--bg);
+}
+.fmenu input:focus{border-color:#b9c0ca}
+.mopts{max-height:260px;overflow:auto}
+.mopt{
+  padding:6.5px 10px;border-radius:7px;font-size:12.5px;cursor:pointer;display:flex;gap:8px;
+  align-items:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.mopt:hover{background:var(--line-2)}
+.mopt.sel{font-weight:600}
+.mopt.sel::after{content:"✓";margin-left:auto;font-size:11px}
+.fsearch{
+  display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--line);
+  border-radius:9px;padding:6px 11px;min-width:190px;flex:1;max-width:280px;
+}
+.fsearch input{border:0;outline:none;background:none;width:100%;font-size:12.5px}
+.fsearch svg{color:var(--ink-3);flex:none}
+.presets{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:3px;gap:2px}
+.presets button{padding:4px 10px;border-radius:7px;font-size:11.5px;font-weight:600;color:var(--ink-2)}
+.presets button.on{background:var(--ink);color:#fff}
+.dinput{
+  background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:5px 8px;
+  font-size:11.5px;color:var(--ink-2);outline:none;width:118px;
+}
+.clearbtn{font-size:12px;font-weight:600;color:var(--ink-2);padding:6px 10px;border-radius:8px}
+.clearbtn:hover{background:var(--line-2);color:var(--bad)}
+
+/* ── Layout & panels ─────────────────────────────────────────── */
+main{
+  display:grid;grid-template-columns:repeat(12,1fr);gap:16px;
+  padding:20px 28px 10px;max-width:1560px;margin:0 auto;
+}
+.c12{grid-column:span 12}.c7{grid-column:span 7}.c6{grid-column:span 6}.c5{grid-column:span 5}
+@media(max-width:1080px){.c7,.c6,.c5{grid-column:span 12}}
+.panel{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:20px 22px;transition:box-shadow .2s var(--ease);
+  animation:rise .3s var(--ease);
+}
+@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
+.p-head h2{font-size:14.5px}
+.p-head p{font-size:12px;color:var(--ink-3);margin-top:2px}
+.p-actions{display:flex;gap:6px;flex:none;flex-wrap:wrap;justify-content:flex-end}
+.tab{
+  padding:4.5px 11px;border-radius:8px;font-size:11.5px;font-weight:600;color:var(--ink-2);
+  border:1px solid var(--line);transition:all .15s var(--ease);background:var(--surface);
+}
+.tab:hover{border-color:#c9ced6}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.empty{padding:26px 0;text-align:center;color:var(--ink-3);font-size:12.5px}
+.foot{padding:14px 28px 30px;text-align:center;font-size:11.5px;color:var(--ink-3)}
+
+/* ── KPI strip ───────────────────────────────────────────────── */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(172px,1fr));gap:12px}
+.kpi{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:15px 16px 13px;cursor:pointer;position:relative;
+  transition:all .18s var(--ease);animation:rise .3s var(--ease);
+}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#d5d9df}
+.kpi .lbl{font-size:11px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;display:flex;justify-content:space-between;gap:6px}
+.kpi .tag{font-size:9.5px;font-weight:700;color:var(--ink-3);letter-spacing:.06em;background:var(--line-2);padding:2px 6px;border-radius:5px;flex:none}
+.kpi .val{font-size:23px;font-weight:800;letter-spacing:-.02em;margin-top:7px;white-space:nowrap}
+.kpi .sub{font-size:11px;color:var(--ink-3);margin-top:3px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.kpi .spark{position:absolute;right:12px;bottom:11px;opacity:.85}
+.chip{font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:99px;background:var(--line-2);color:var(--ink-2);white-space:nowrap}
+.chip.up{background:var(--good-bg);color:var(--good)}
+.chip.down{background:var(--bad-bg);color:var(--bad)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+
+/* ── Brief / insights ────────────────────────────────────────── */
+.health{display:flex;gap:14px;flex-wrap:wrap}
+.hchip{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-2)}
+.hdot{width:8px;height:8px;border-radius:50%}
+.hdot.g{background:var(--good)}.hdot.a{background:#d99a06}.hdot.r{background:var(--bad)}
+.insights{list-style:none;margin-top:4px}
+.insights li{
+  padding:8.5px 0;border-bottom:1px solid var(--line-2);font-size:13px;color:var(--ink-2);
+  display:flex;gap:10px;align-items:baseline;
+}
+.insights li:last-child{border-bottom:0}
+.insights li::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--ink-3);flex:none;transform:translateY(-2px)}
+.insights b{color:var(--ink);font-weight:700}
+
+/* ── Tables ──────────────────────────────────────────────────── */
+.twrap{overflow-x:auto;margin:0 -6px;padding:0 6px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+th{
+  text-align:left;font-size:10.5px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--ink-3);padding:7px 10px;border-bottom:1px solid var(--line);white-space:nowrap;
+  position:sticky;top:0;background:var(--surface);cursor:pointer;user-select:none;
+}
+th.num,td.num{text-align:right}
+td{padding:8px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;max-width:230px;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+tbody tr{transition:background .12s}
+tbody tr:hover{background:#fafbfc}
+tbody tr.click{cursor:pointer}
+.rank{
+  display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;
+  font-size:10.5px;font-weight:800;background:var(--line-2);color:var(--ink-2);
+}
+.rank.r1{background:var(--ink);color:#fff}
+.rank.r2{background:#3d4450;color:#fff}
+.rank.r3{background:#828b98;color:#fff}
+.cellbar{display:flex;align-items:center;gap:8px;min-width:120px}
+.cellbar .track{flex:1;height:5px;border-radius:99px;background:var(--line-2);overflow:hidden;min-width:60px}
+.cellbar .fill{height:100%;border-radius:99px;background:var(--ink);transition:width .5s var(--ease)}
+.cellbar .fill.low{background:var(--bad)}
+.cellbar .fill.mid{background:#d99a06}
+.flag{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
+
+/* ── Bar lists / distributions ───────────────────────────────── */
+.cols{display:grid;gap:26px}
+.cols.c3{grid-template-columns:1fr 1fr 1fr}
+.cols.c2{grid-template-columns:1fr 1fr}
+@media(max-width:900px){.cols.c3,.cols.c2{grid-template-columns:1fr}}
+.coltitle{font-size:11px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.blist{display:flex;flex-direction:column;gap:4px}
+.brow{
+  display:grid;grid-template-columns:minmax(70px,38%) 1fr auto;align-items:center;gap:10px;
+  padding:4.5px 6px;border-radius:8px;cursor:pointer;transition:background .13s;
+}
+.brow:hover{background:var(--line-2)}
+.brow .bl{font-size:12.5px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.brow .track{height:7px;border-radius:99px;background:var(--line-2);overflow:hidden}
+.brow .fill{height:100%;border-radius:99px;background:var(--ink);transition:width .55s var(--ease)}
+.brow .bv{font-size:12px;font-weight:700;white-space:nowrap}
+.brow .shr{font-size:10.5px;color:var(--ink-3);font-weight:500;margin-left:4px}
+.dist{display:flex;height:12px;border-radius:99px;overflow:hidden;gap:2px;background:var(--line-2)}
+.dist span{display:block;height:100%;min-width:3px;transition:width .5s var(--ease)}
+.dlegend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.dlegend div{display:flex;align-items:center;gap:6px;font-size:11.5px;color:var(--ink-2)}
+.dlegend i{width:8px;height:8px;border-radius:3px;display:block}
+.statrow{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:18px}
+.stat{background:var(--bg);border:1px solid var(--line-2);border-radius:11px;padding:11px 13px;cursor:pointer;transition:all .15s var(--ease)}
+.stat:hover{border-color:#d5d9df;transform:translateY(-1px)}
+.stat .sv{font-size:17px;font-weight:800;letter-spacing:-.01em}
+.stat .sl{font-size:10.5px;color:var(--ink-3);font-weight:600;margin-top:2px}
+
+/* ── Trend chart ─────────────────────────────────────────────── */
+.trendwrap{position:relative}
+.trend-legend{display:flex;gap:16px;font-size:11.5px;color:var(--ink-2);align-items:center}
+.tl-solid{display:inline-block;width:16px;height:2.5px;background:var(--ink);border-radius:2px;margin-right:6px;vertical-align:middle}
+.tl-dash{display:inline-block;width:16px;height:0;border-top:2px dashed #b3bac4;margin-right:6px;vertical-align:middle}
+.ctip{
+  position:fixed;z-index:100;pointer-events:none;background:var(--ink);color:#fff;border-radius:9px;
+  padding:8px 11px;font-size:11.5px;box-shadow:var(--shadow-2);opacity:0;transition:opacity .12s;max-width:260px;
+}
+.ctip b{font-weight:700}
+.ctip .tt-sub{color:#aab2bd;margin-top:2px}
+
+/* ── Feed & exceptions ───────────────────────────────────────── */
+.feed{max-height:430px;overflow:auto;display:flex;flex-direction:column}
+.fev{display:flex;gap:12px;padding:9px 4px;border-bottom:1px solid var(--line-2);cursor:pointer;border-radius:8px}
+.fev:hover{background:var(--line-2)}
+.fev .fic{
+  width:28px;height:28px;border-radius:9px;background:var(--line-2);display:grid;place-items:center;
+  flex:none;font-size:10px;font-weight:800;color:var(--ink-2);letter-spacing:.02em;
+}
+.fev .fic.txn{background:var(--ink);color:#fff}
+.fev .fmain{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fev .fmeta{font-size:11px;color:var(--ink-3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fev .ftime{margin-left:auto;font-size:10.5px;color:var(--ink-3);white-space:nowrap;flex:none;padding-top:2px}
+.exc{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto}
+.xrow{
+  display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);
+  border-radius:11px;cursor:pointer;transition:all .15s var(--ease);
+}
+.xrow:hover{transform:translateY(-1px);box-shadow:var(--shadow)}
+.xrow .xdot{width:8px;height:8px;border-radius:50%;flex:none;margin-top:5px}
+.xrow.hi .xdot{background:var(--bad)}.xrow.med .xdot{background:#d99a06}.xrow.low .xdot{background:var(--ink-3)}
+.xrow .xt{font-size:12.5px;font-weight:700}
+.xrow .xd{font-size:11.5px;color:var(--ink-2);margin-top:2px}
+.xrow .xn{margin-left:auto;flex:none;font-size:11.5px;font-weight:800;background:var(--line-2);border-radius:99px;padding:2px 9px}
+.allgood{display:flex;align-items:center;gap:10px;padding:14px;border-radius:11px;background:var(--good-bg);color:var(--good);font-size:12.5px;font-weight:600}
+
+/* ── Grid section ────────────────────────────────────────────── */
+.gridchips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+.gridtable{max-height:480px;overflow:auto;border:1px solid var(--line);border-radius:11px}
+.gridtable table{font-size:12px}
+.gridtable td{padding:6.5px 10px}
+.gnote{font-size:11px;color:var(--ink-3);margin-top:8px}
+
+/* ── Drawer (drill-down) ─────────────────────────────────────── */
+.scrim{
+  position:fixed;inset:0;background:rgba(15,17,21,.32);z-index:80;opacity:0;pointer-events:none;
+  transition:opacity .22s var(--ease);backdrop-filter:blur(2px);
+}
+.scrim.open{opacity:1;pointer-events:auto}
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;width:min(880px,94vw);z-index:90;background:var(--surface);
+  box-shadow:-18px 0 50px rgba(16,20,28,.18);transform:translateX(103%);transition:transform .26s var(--ease);
+  display:flex;flex-direction:column;
+}
+.drawer.open{transform:none}
+.dhead{padding:18px 24px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:14px}
+.dhead h3{font-size:15.5px}
+.dhead p{font-size:12px;color:var(--ink-3);margin-top:2px}
+.dstats{display:flex;gap:8px;flex-wrap:wrap;padding:12px 24px 0}
+.dstats .chip{font-size:11px;padding:4px 10px}
+.dbody{flex:1;overflow:auto;padding:14px 24px 24px}
+.dbody table{font-size:12px}
+
+/* ── Skeletons & toast ───────────────────────────────────────── */
+.skel{border-radius:var(--r);background:linear-gradient(100deg,#eceef1 40%,#f5f6f8 50%,#eceef1 60%);background-size:200% 100%;animation:sh 1.3s infinite}
+@keyframes sh{to{background-position:-200% 0}}
+.toast{
+  position:fixed;left:50%;bottom:26px;transform:translate(-50%,70px);z-index:110;background:var(--ink);
+  color:#fff;font-size:12.5px;font-weight:600;padding:10px 18px;border-radius:99px;box-shadow:var(--shadow-2);
+  transition:transform .3s var(--ease);display:flex;gap:8px;align-items:center;
+}
+.toast.show{transform:translate(-50%,0)}
+.errbar{
+  grid-column:span 12;background:var(--bad-bg);border:1px solid #efcfcd;color:var(--bad);
+  border-radius:var(--r);padding:14px 18px;font-size:13px;display:flex;gap:12px;align-items:center;
+}
+.errbar button{font-weight:700;text-decoration:underline}
+@media(max-width:760px){
+  .topbar{padding:10px 14px;gap:10px}.filterbar{padding:8px 14px;top:55px}
+  main{padding:14px;gap:12px}.brand p{display:none}.seg button{padding:5px 10px}
+  .kpi .val{font-size:19px}.drawer{width:100vw}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="mark">OMP</div>
+    <div><h1>Control Tower</h1><p>Open Marketplace · Executive Operations</p></div>
+    <span class="badge" id="envbadge" style="display:none">DEMO DATA</span>
+  </div>
+  <div class="seg" id="vseg"></div>
+  <div class="top-right">
+    <div class="sync" id="sync"><span class="dot pulse"></span><span>Connecting…</span></div>
+    <button class="iconbtn" id="refreshbtn" data-refresh title="Refresh from Google Sheets">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M21 12a9 9 0 1 1-2.6-6.4M21 3v6h-6"/></svg>
+    </button>
+  </div>
+</header>
+
+<div class="filterbar" id="filterbar"></div>
+
+<main id="main">
+  <section class="c12" id="s-kpi"><div class="skel" style="height:110px"></div></section>
+  <section class="c12" id="s-brief"><div class="skel" style="height:150px"></div></section>
+  <section class="c12" id="s-target"><div class="skel" style="height:220px"></div></section>
+  <section class="c12" id="s-trend"><div class="skel" style="height:300px"></div></section>
+  <section class="c12" id="s-poc"><div class="skel" style="height:280px"></div></section>
+  <section class="c12" id="s-region"><div class="skel" style="height:240px"></div></section>
+  <section class="c12" id="s-ops"><div class="skel" style="height:240px"></div></section>
+  <section class="c6" id="s-seller"><div class="skel" style="height:300px"></div></section>
+  <section class="c6" id="s-buyer"><div class="skel" style="height:300px"></div></section>
+  <section class="c7" id="s-feed"><div class="skel" style="height:300px"></div></section>
+  <section class="c5" id="s-exc"><div class="skel" style="height:300px"></div></section>
+  <section class="c12" id="s-grid"><div class="skel" style="height:320px"></div></section>
+</main>
+<footer class="foot" id="foot"></footer>
+
+<div class="scrim" id="scrim" data-close></div>
+<aside class="drawer" id="drawer"></aside>
+<div class="ctip" id="ctip"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ════════════════════════════════════════════════════════════════
+   OMP EXECUTIVE CONTROL TOWER — CLIENT
+   ────────────────────────────────────────────────────────────────
+   TABLE OF CONTENTS
+     01 CONFIG        semantic patterns — the only "knowledge" here
+     02 STATE         filters + ui state
+     03 HELPERS       formatting, parsing, escaping
+     04 SCHEMA ENGINE reads ANY sheet: headers, roles, sheet type
+     05 REPORT PARSER "Metric | Target | Achieved" review blocks
+     06 SYNC          load from Apps Script, poll for live changes
+     07 FILTERS       dynamic options + record filtering
+     08 MODEL         every KPI/aggregate computed from records
+     09 CHARTS        spark / trend / bar list / distribution
+     10 RENDER        the twelve sections
+     11 DRILL & GRID  drawer, data explorer, CSV export
+     12 EVENTS        one delegated listener
+     13 MOCK          demo data when not deployed in Apps Script
+   Data flow (one direction): sheets → records → model → render.
+   ════════════════════════════════════════════════════════════════ */
+
+/* ═══ 01 CONFIG ═══════════════════════════════════════════════ */
+
+// Column roles are detected by fuzzy header match, tried in priority
+// order — nothing is hardcoded to a specific sheet. `not` guards
+// against lookalikes (e.g. "Contact Person {Seller POC}" is NOT the POC).
+const ROLE_DEFS = {
+  date:        { pri:[/^created date$/,/^date$/,/^txn date$/,/^order date$/,/^invoice date$/,/^created$/,/\bdate\b/], not:/updated|reject|due|expir|last edit|dob/ },
+  onboarded:   { pri:[/^onboarded date$/,/onboard.*date/], not:null },
+  region:      { pri:[/^region$/,/\bregion\b/], not:/wise/ },
+  rh:          { pri:[/^rh name$/,/\brh\b/,/regional head/], not:null },
+  poc:         { pri:[/^poc$/,/^poc name$/,/^spoc$/,/\bpoc\b/], not:/contact|person|mobile|email/ },
+  seller:      { pri:[/^seller business name$/,/^seller name$/,/^seller$/,/seller business name/,/^supplier\b/], not:/gst|\bid\b|mobile|email|state|city|status|type|count|poc|date|last|listing/ },
+  buyer:       { pri:[/^buyer name$/,/^buyer business name$/,/^buyer$/,/^customer\b/], not:/gst|\bid\b|mobile|email|state|city|status|count|poc|date/ },
+  material:    { pri:[/^item names?$/,/^material$/,/^product$/,/^commodity$/,/\bitem name/,/\bmaterial\b/], not:/hsn/ },
+  state:       { pri:[/^state$/,/^seller state$/,/^buyer state$/,/\bstate\b/], not:/status/ },
+  status:      { pri:[/^order status$/,/^status$/,/^seller status$/,/^buyer status$/,/^stage$/,/\bstatus\b/], not:/shipment/ },
+  shipstatus:  { pri:[/^shipment status$/,/shipment status/], not:null },
+  id:          { pri:[/^requisition id$/,/^order id$/,/^sales order id$/,/^invoice number$/,/^listing id$/], not:null },
+  tonnage:     { pri:[/^booked qty mt$/,/^invoice qty mt$/,/^tonnage mt$/,/^qty mt$/,/^total quantity mt$/,/tonnage mt/,/quantity mt/,/\btonnage\b/,/\bqty mt\b/], not:/target|price|rate|plan|projection|balance|yesterday|today/ },
+  invqty:      { pri:[/^invoice qty mt$/], not:null },
+  gmv:         { pri:[/^total amount$/,/^gmv cr$/,/^total gmv cr$/,/^gmv$/,/\bgmv\b/,/^invoice total amount$/,/^taxable amount$/,/total amount/], not:/target|gst amount|balance|\bnm\b|plan|projection/ },
+  ttarget:     { pri:[/tonnage.*target/,/target.*tonnage/,/qty.*target/,/target.*qty/,/target.*\bmt\b/,/\bmt\b.*target/], not:null },
+  target:      { pri:[/^target$/,/\btarget\b/], not:/date/ },
+  daysinactive:{ pri:[/days inactive/,/inactive.*day/], not:null },
+  rating:      { pri:[/^rating$/], not:null },
+  payterms:    { pri:[/^payment terms?$/,/payment term/], not:/days|bucket/ },
+};
+
+// Lifecycle buckets — any status string from any sheet lands in one.
+const BUCKETS = [
+  ['done',    /complet|received|closed|delivered|paid|approved|active/],
+  ['moving',  /dispatch|transit|reached|verified|booked|progress|review submitted/],
+  ['dropped', /cancel|reject|expir|lost|fail|drop/],
+  ['pending', /draft|pending|hold|await|open|new|submitted|not |initiat|review|rework/],
+];
+const BUCKET_META = {
+  pending:{label:'Pending', color:'#d9dce2'},
+  moving:{label:'In progress', color:'#98a1ae'},
+  done:{label:'Completed', color:'#0f1115'},
+  dropped:{label:'Dropped', color:'#cf837d'},
+};
+const BUCKET_ORDER = ['pending','moving','done','dropped'];
+
+// Which review-sheet metric rows map to which headline measure.
+const METRIC_KEYS = {
+  tonnage:{label:'Tonnage', re:/tonnage/i, fmt:v=>fmtT(v)},
+  gmv:{label:'GMV', re:/gmv/i, fmt:v=>fmtCrRaw(v)},
+  txns:{label:'Transactions', re:/txn|transaction/i, fmt:v=>fmtInt(v)},
+  sellers:{label:'Sellers Onboarded', re:/onboard/i, fmt:v=>fmtInt(v)},
+};
+
+const DIMS = ['region','rh','poc','seller','buyer','material','status','state'];
+const DIM_LABELS = {region:'Region', rh:'RH', poc:'POC', seller:'Seller', buyer:'Buyer', material:'Material', status:'Status', state:'State'};
+const PRESETS = [['TODAY','Today'],['7D','7D'],['MTD','MTD'],['30D','30D'],['ALL','All']];
+
+const STUCK_DAYS = 3, INACTIVE_DAYS = 7, LOW_ACH_PCT = 50;
+const POLL_MS = 60000;
+
+/* ═══ 02 STATE ════════════════════════════════════════════════ */
+
+const IS_GAS = !!(window.google && window.google.script && window.google.script.run);
+let RAW = null;        // snapshot from server
+let PARSED = null;     // { sheets, reports }
+let MODEL = null;      // everything computed
+let OPTIONS = {};      // filter dropdown options
+let DRILLS = [];       // drill-down payloads for this render
+let TREND = null;      // hover data for the trend chart
+
+const state = {
+  filters:{ vertical:'All', region:'', rh:'', poc:'', seller:'', buyer:'', material:'', status:'', state:'', search:'' },
+  preset:'MTD', from:'', to:'',
+  trendMetric:'tonnage', tmetric:'tonnage',
+  openMenu:null, grid:null, gridSearch:'', gridSort:null,
+};
+
+/* ═══ 03 HELPERS ══════════════════════════════════════════════ */
+
+const $ = id => document.getElementById(id);
+const norm = s => String(s==null?'':s).toLowerCase().replace(/[^a-z0-9%]+/g,' ').trim();
+const nkey = s => String(s==null?'':s).toLowerCase().replace(/\s+/g,' ').trim();
+const esc = s => String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sum = (arr,k) => arr.reduce((a,r)=>a+(r[k]||0),0);
+const uniq = arr => [...new Set(arr.filter(Boolean))];
+
+const IS_ERR = v => typeof v==='string' && /^#(DIV|N\/A|REF|VALUE|NAME|NUM|ERROR)/i.test(v);
+
+function toNum(v){
+  if (v==null || v==='') return null;
+  if (typeof v==='number') return isFinite(v)?v:null;
+  if (IS_ERR(v)) return null;
+  const n = parseFloat(String(v).replace(/[₹,%\s,]/g,''));
+  return isNaN(n)?null:n;
+}
+function toDate(v){
+  if (v==null || v==='') return null;
+  if (v instanceof Date) return v;
+  const s = String(v);
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?/);
+  if (m) return new Date(+m[1], +m[2]-1, +m[3], +(m[4]||0), +(m[5]||0), +(m[6]||0));
+  if (typeof v==='number' || /^[\d.,]+$/.test(s)) return null;   // plain numbers are not dates
+  const d = new Date(s);
+  return isNaN(d) ? null : d;
+}
+// Percent cells arrive either as fractions (0.25 → 25%) or plain numbers.
+function pctVal(v){
+  const n = toNum(v);
+  if (n==null) return null;
+  return Math.abs(n)<=5 ? n*100 : n;
+}
+const today = () => { const d=new Date(); d.setHours(0,0,0,0); return d; };
+const endOfDay = d => new Date(d.getFullYear(),d.getMonth(),d.getDate(),23,59,59);
+const daysInMonth = d => new Date(d.getFullYear(),d.getMonth()+1,0).getDate();
+const dayMs = 86400000;
+const ageDays = d => d ? Math.floor((Date.now()-d.getTime())/dayMs) : null;
+
+const _nf = {};
+function nf(v,d){ const k='k'+d; _nf[k]=_nf[k]||new Intl.NumberFormat('en-IN',{maximumFractionDigits:d}); return _nf[k].format(v); }
+const fmtInt = v => v==null?'—':nf(Math.round(v),0);
+const fmtT = v => v==null?'—':nf(v, Math.abs(v)<100?1:0)+' MT';
+function fmtCr(v){        // v in rupees
+  if (v==null) return '—';
+  const a=Math.abs(v);
+  if (a>=1e7) return '₹'+nf(v/1e7, a>=1e9?1:2)+' Cr';
+  if (a>=1e5) return '₹'+nf(v/1e5,1)+' L';
+  if (a>=1e3) return '₹'+nf(v/1e3,0)+' K';
+  return '₹'+nf(v,0);
+}
+const fmtCrRaw = v => v==null?'—':nf(v,2);          // review sheets already speak "₹ Cr"
+const fmtPct = (v,d=0) => v==null?'—':nf(v,d)+'%';
+const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const fmtDay = d => d ? d.getDate()+' '+MONTHS[d.getMonth()] : '—';
+const fmtDT = d => d ? fmtDay(d)+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0') : '—';
+function timeAgo(d){
+  if(!d) return '';
+  const s=(Date.now()-d.getTime())/1000;
+  if(s<3600) return Math.max(1,Math.floor(s/60))+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+function growthPct(cur,prev){ if(prev==null||prev===0) return null; return (cur-prev)/Math.abs(prev)*100; }
+function deltaChip(pct, suffix){
+  if (pct==null) return '<span class="chip">— '+(suffix||'')+'</span>';
+  const up=pct>=0;
+  return '<span class="chip '+(up?'up':'down')+'">'+(up?'▲':'▼')+' '+nf(Math.abs(pct),Math.abs(pct)<10?1:0)+'%'+(suffix?' '+suffix:'')+'</span>';
+}
+function fmtCell(v){
+  if (v==null||v==='') return '<span style="color:var(--ink-3)">—</span>';
+  if (IS_ERR(v)) return '<span style="color:var(--bad)">'+esc(v)+'</span>';
+  if (typeof v==='number') return '<span class="num">'+nf(v, Math.abs(v)%1?2:0)+'</span>';
+  const d = String(v).match(/^(\d{4})-(\d{2})-(\d{2})/);
+  if (d) return d[1].slice(2)!=='00' ? +d[3]+' '+MONTHS[+d[2]-1]+' '+d[1].slice(2) : esc(v);
+  return esc(v);
+}
+function bucketOf(s){
+  const n=norm(s);
+  if(!n) return 'pending';
+  for (const [b,re] of BUCKETS) if (re.test(n)) return b;
+  return 'moving';
+}
+function cleanLabel(s){
+  return String(s).replace(/[\u{1F000}-\u{1FAFF}\u{2190}-\u{27BF}\u{FE0F}\u{2B00}-\u{2BFF}]/gu,'').replace(/\s+/g,' ').trim();
+}
+
+/* ═══ 04 SCHEMA ENGINE ════════════════════════════════════════ */
+
+// The header row is the first row dominated by non-numeric text cells.
+function findHeaderRow(values){
+  let best=-1, bestScore=0;
+  for (let r=0; r<Math.min(values.length,15); r++){
+    let score=0;
+    for (const c of values[r]){
+      if (c==null||c==='') continue;
+      if (typeof c==='string' && !/^[-+]?[\d.,%]+$/.test(c) && !IS_ERR(c)) score++;
+    }
+    if (score>=2 && score>bestScore*1.15){ best=r; bestScore=score; }
+  }
+  return best;
+}
+
+function detectRoles(headers){
+  const hs = headers.map(norm), roles={};
+  for (const [role,def] of Object.entries(ROLE_DEFS)){
+    outer:
+    for (const p of def.pri){
+      for (let i=0;i<hs.length;i++){
+        if (!hs[i]) continue;
+        if (p.test(hs[i]) && !(def.not && def.not.test(hs[i]))){ roles[role]=i; break outer; }
+      }
+    }
+  }
+  return roles;
+}
+
+// Sheet type comes from what the sheet CONTAINS, with its name as a hint —
+// so renamed or brand-new tabs still land in the right place.
+function classify(name, roles){
+  const n = norm(name);
+  const hasActual = roles.tonnage!=null || roles.gmv!=null;
+  const hasTarget = roles.ttarget!=null || roles.target!=null;
+  if (/demand/.test(n) && (roles.poc!=null||roles.seller!=null||roles.buyer!=null)) return 'demand';
+  if (hasTarget && !hasActual && (roles.poc!=null||roles.seller!=null||roles.buyer!=null)) return 'demand';
+  if (roles.seller!=null && roles.buyer!=null && hasActual) return 'transactions';
+  if (roles.seller!=null && roles.buyer==null && (roles.status!=null||roles.onboarded!=null)) return 'sellers';
+  if (roles.buyer!=null && roles.seller==null) return 'buyers';
+  if (roles.seller!=null && roles.buyer!=null) return 'mapping';
+  if (/txn|order|procure|transaction/.test(n)) return 'transactions';
+  if (/seller|onboard/.test(n)) return 'sellers';
+  if (/buyer/.test(n)) return 'buyers';
+  return 'other';
+}
+
+function toRecords(sheet){
+  const R = sheet.roles;
+  return sheet.rows.map((row,i)=>{
+    const cell = k => R[k]!=null ? row[R[k]] : null;
+    const str  = k => { const v=cell(k); return v==null?'':String(v).trim(); };
+    return {
+      vertical:sheet.vertical, sheetKey:sheet.key, sheetName:sheet.name, ri:i, _row:row, _roles:R,
+      date:toDate(cell('date')), onboarded:toDate(cell('onboarded')),
+      region:str('region'), rh:str('rh'), poc:str('poc'),
+      seller:str('seller'), buyer:str('buyer'), material:str('material'),
+      state:str('state'), status:str('status'), shipstatus:str('shipstatus'),
+      id:str('id'), payterms:str('payterms'),
+      tonnage:toNum(cell('tonnage'))||0,
+      invqty:toNum(cell('invqty'))||0,
+      gmv:(toNum(cell('gmv'))||0)*sheet.gmvScale,
+      ttarget:(toNum(cell('ttarget'))!=null?toNum(cell('ttarget')):toNum(cell('target')))||0,
+      daysinactive:toNum(cell('daysinactive')),
+    };
+  });
+}
+
+function parseSnapshot(raw){
+  const sheets=[], reports=[];
+  (raw.verticals||[]).forEach(v=>{
+    (v.sheets||[]).forEach(sh=>{
+      const values = sh.values||[];
+      if (!values.length) return;
+      let errCells=0;
+      values.forEach(r=>r.forEach(c=>{ if(IS_ERR(c)) errCells++; }));
+      const key = v.vertical+'∷'+sh.name;
+      const blocks = findReportBlocks(v.vertical, sh.name, values);
+      if (blocks.length){
+        reports.push(...blocks);
+        sheets.push({vertical:v.vertical, name:sh.name, key, values, type:'report', headers:null, rows:[], roles:{}, recs:[], gmvScale:1, errCells});
+        return;
+      }
+      const hi = findHeaderRow(values);
+      let headers=null, rows=[], roles={}, type='other', gmvScale=1;
+      if (hi>=0){
+        headers = values[hi].map((h,i)=>String(h==null?'':h).trim()||('Col '+(i+1)));
+        rows = values.slice(hi+1).filter(r=>r.some(c=>c!==''&&c!=null));
+        roles = detectRoles(headers);
+        type = classify(sh.name, roles);
+        if (type==='other'){                        // directory sheets that just say "Name"
+          const ni = headers.findIndex(h=>norm(h)==='name');
+          if (ni>=0 && (roles.rating!=null || /buyer/.test(norm(sh.name)))){ roles.buyer=ni; type='buyers'; }
+          else if (ni>=0 && /seller/.test(norm(sh.name))){ roles.seller=ni; type='sellers'; }
+        }
+        if (roles.gmv!=null){
+          const h=norm(headers[roles.gmv]);
+          if (/\bcr\b|crore/.test(h)) gmvScale=1e7; else if (/lakh|lac/.test(h)) gmvScale=1e5;
+        }
+      }
+      const sheet = {vertical:v.vertical, name:sh.name, key, values, headers, rows, roles, type, gmvScale, errCells, headerIdx:hi};
+      sheet.recs = hi>=0 ? toRecords(sheet) : [];
+      sheets.push(sheet);
+    });
+  });
+
+  // Cross-sheet enrichment: sellers/mapping tabs teach us each seller's
+  // POC / RH / region / state, so transaction rows inherit what they lack.
+  const dir={};
+  for (const s of sheets) if (['sellers','mapping'].includes(s.type))
+    for (const r of s.recs) if (r.seller){
+      const d = dir[nkey(r.seller)] = dir[nkey(r.seller)]||{};
+      if (r.poc && !d.poc) d.poc=r.poc;
+      if (r.rh && !d.rh) d.rh=r.rh;
+      if (r.region && !d.region) d.region=r.region;
+      if (r.state && !d.state) d.state=r.state;
+    }
+  for (const s of sheets) if (s.type==='transactions')
+    for (const r of s.recs){
+      const d = dir[nkey(r.seller)];
+      if (!d) continue;
+      if (!r.poc) r.poc=d.poc||'';
+      if (!r.rh) r.rh=d.rh||'';
+      if (!r.region) r.region=d.region||'';
+      if (!r.state) r.state=d.state||'';
+    }
+  return {sheets, reports};
+}
+
+/* ═══ 05 REPORT PARSER ════════════════════════════════════════ */
+// Review tabs repeat this shape:   📍 North
+//   Metric | Target | Achieved | Ach % | LMTD | Growth | (daily…)
+// Each block becomes rows of {group, metric, target, achieved, …}.
+function findReportBlocks(vertical, sheetName, values){
+  const out=[];
+  for (let r=0;r<values.length;r++){
+    const cells = values[r].map(c=>norm(c));
+    const mi = cells.findIndex(c=>c==='metric');
+    if (mi<0 || !cells.some(c=>/^target/.test(c))) continue;
+    const col={metric:mi};
+    cells.forEach((c,i)=>{
+      if (/^target/.test(c)) col.target=col.target??i;
+      else if (/^achiev/.test(c)) col.achieved=col.achieved??i;
+      else if (/ach\s*%/.test(c)) col.achPct=col.achPct??i;
+      else if (/^lmtd/.test(c)) col.lmtd=col.lmtd??i;
+      else if (/^growth/.test(c)) col.growth=col.growth??i;
+    });
+    let group='Overall';
+    for (let u=r-1;u>=Math.max(0,r-4);u--){
+      const filled = values[u].filter(c=>String(c==null?'':c).trim()!=='');
+      if (filled.length && filled.length<=2){
+        const s = cleanLabel(filled[0]);
+        if (s && !/as of|review|dashboard|mtd|summary —/i.test(s)){ group=s; break; }
+      }
+    }
+    if (/overall/i.test(group)) group='Overall';
+    for (let d=r+1; d<values.length; d++){
+      const met = String(values[d][col.metric]==null?'':values[d][col.metric]).trim();
+      if (!met || norm(met)==='metric') break;
+      const g = i => i!=null ? values[d][i] : null;
+      const row = {vertical, sheet:sheetName, group, metric:cleanLabel(met),
+        target:toNum(g(col.target)), achieved:toNum(g(col.achieved)),
+        achPct:pctVal(g(col.achPct)), lmtd:toNum(g(col.lmtd)), growth:pctVal(g(col.growth))};
+      if (row.target==null && row.achieved==null && row.lmtd==null) break;   // banner of next block
+      out.push(row);
+    }
+  }
+  return out;
+}
+
+/* ═══ 06 SYNC ═════════════════════════════════════════════════ */
+
+function serverCall(fn, ...args){
+  return new Promise((res,rej)=>
+    google.script.run.withSuccessHandler(res).withFailureHandler(rej)[fn](...args));
+}
+
+async function loadData(force, quiet){
+  const btn=$('refreshbtn'); btn.classList.add('spin');
+  try{
+    if (IS_GAS){
+      RAW = JSON.parse(await serverCall('getDashboardData', !!force));
+    } else {
+      await new Promise(r=>setTimeout(r,450));
+      RAW = mockSnapshot();
+      $('envbadge').style.display='';
+    }
+    PARSED = parseSnapshot(RAW);
+    if (state.grid==null){
+      const t = PARSED.sheets.find(s=>s.type==='transactions')||PARSED.sheets[0];
+      state.grid = t ? t.key : null;
+    }
+    render();
+    if (quiet) toast('Synced — new data from Sheets');
+  }catch(e){
+    console.error(e);
+    $('main').insertAdjacentHTML('afterbegin',
+      '<div class="errbar">Could not load data: '+esc(e.message||e)+' <button data-refresh>Retry</button></div>');
+  }finally{ btn.classList.remove('spin'); }
+}
+
+function startPolling(){
+  if (!IS_GAS) return;
+  setInterval(async ()=>{
+    try{
+      const v = await serverCall('getVersion');
+      if (RAW && v!==RAW.version) loadData(true, true);
+    }catch(e){/* transient — next poll retries */}
+  }, POLL_MS);
+}
+
+let toastTimer=null;
+function toast(msg){
+  const t=$('toast'); t.textContent=msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer=setTimeout(()=>t.classList.remove('show'), 2600);
+}
+
+/* ═══ 07 FILTERS ══════════════════════════════════════════════ */
+
+function resolveRange(){
+  const t = today();
+  switch(state.preset){
+    case 'TODAY': return {from:t, to:endOfDay(t)};
+    case '7D':    return {from:new Date(t.getTime()-6*dayMs), to:endOfDay(t)};
+    case 'MTD':   return {from:new Date(t.getFullYear(),t.getMonth(),1), to:endOfDay(t)};
+    case '30D':   return {from:new Date(t.getTime()-29*dayMs), to:endOfDay(t)};
+    case 'CUSTOM':{
+      const f=state.from?toDate(state.from):null, o=state.to?toDate(state.to):null;
+      return {from:f, to:o?endOfDay(o):endOfDay(t)};
+    }
+    default: return {from:null, to:null};
+  }
+}
+const periodLabel = () => state.preset==='CUSTOM' ? 'Custom' : (PRESETS.find(p=>p[0]===state.preset)||['','Period'])[1];
+
+function passDims(r){
+  const F=state.filters;
+  for (const d of DIMS){
+    if (!F[d]) continue;
+    if (d==='status'){
+      if (r._roles.status==null && r._roles.shipstatus==null) continue;
+      if (r.status!==F[d] && r.shipstatus!==F[d]) return false;
+    } else {
+      if (r._roles[d]==null) continue;      // sheet has no such column → not filterable by it
+      if (r[d]!==F[d]) return false;
+    }
+  }
+  if (F.search){
+    const q=F.search.toLowerCase();
+    if (!(r._row.join(' ')+' '+r.sheetName).toLowerCase().includes(q)) return false;
+  }
+  return true;
+}
+const inRange = (d,range) => !range.from ? true : (d ? d>=range.from && d<=range.to : false);
+
+function buildOptions(sheets){
+  const o={};
+  for (const d of DIMS) o[d]=new Set();
+  for (const s of sheets) for (const r of s.recs){
+    for (const d of DIMS) if (d!=='status' && r[d]) o[d].add(r[d]);
+    if (r.status) o.status.add(r.status);
+    if (r.shipstatus) o.status.add(r.shipstatus);
+  }
+  const out={};
+  for (const d of DIMS) out[d]=[...o[d]].sort((a,b)=>a.localeCompare(b)).slice(0,300);
+  return out;
+}
+
+/* ═══ 08 MODEL ════════════════════════════════════════════════ */
+
+function buildModel(){
+  const F=state.filters, range=resolveRange();
+  const sheets = PARSED.sheets.filter(s=>F.vertical==='All'||s.vertical===F.vertical);
+  const verticals = uniq(PARSED.sheets.map(s=>s.vertical));
+  OPTIONS = buildOptions(sheets);
+
+  // one PRIMARY sheet of each kind per vertical (most rows wins) — this is
+  // what stops the same GMV being counted twice from two overlapping tabs.
+  const primary = type => {
+    const out=[];
+    for (const v of uniq(sheets.map(s=>s.vertical))){
+      const cand = sheets.filter(s=>s.vertical===v && s.type===type && s.recs.length);
+      if (cand.length) out.push(cand.reduce((a,b)=>b.recs.length>a.recs.length?b:a));
+    }
+    return out;
+  };
+  const txnSheets=primary('transactions'), sellerSheets=primary('sellers'), buyerSheets=primary('buyers');
+
+  const txnsAll    = txnSheets.flatMap(s=>s.recs).filter(passDims);
+  const txns       = txnsAll.filter(r=>inRange(r.date,range));
+  const sellersAll = sellerSheets.flatMap(s=>s.recs).filter(passDims);
+  const sellersP   = sellersAll.filter(r=>inRange(r.onboarded||r.date,range));
+  const buyersDir  = buyerSheets.flatMap(s=>s.recs).filter(passDims);
+  const demand     = sheets.filter(s=>s.type==='demand').flatMap(s=>s.recs).filter(passDims);
+  const reports    = PARSED.reports.filter(b=>
+    (F.vertical==='All'||b.vertical===F.vertical) &&
+    (!F.region || norm(b.group).includes(norm(F.region)) || b.group==='Overall'));
+
+  // month context (MTD vs LMTD) — anchored to the end of the date range
+  const ref = range.to ? new Date(Math.min(range.to,endOfDay(today()))) : today();
+  const mStart = new Date(ref.getFullYear(),ref.getMonth(),1);
+  const pStart = new Date(ref.getFullYear(),ref.getMonth()-1,1);
+  const pEnd = endOfDay(new Date(pStart.getFullYear(),pStart.getMonth(),Math.min(ref.getDate(),daysInMonth(pStart))));
+  const mtd  = txnsAll.filter(r=>r.date && r.date>=mStart && r.date<=endOfDay(ref));
+  const lmtd = txnsAll.filter(r=>r.date && r.date>=pStart && r.date<=pEnd);
+  const txnCount = rs => { const ids=new Set(rs.filter(r=>r.id).map(r=>r.vertical+'|'+r.id)); return ids.size||rs.length; };
+
+  const daily = (rs, measure, monthAnchor) => {
+    const n = daysInMonth(monthAnchor), arr=new Array(n).fill(0);
+    for (const r of rs) if (r.date && r.date.getMonth()===monthAnchor.getMonth() && r.date.getFullYear()===monthAnchor.getFullYear())
+      arr[r.date.getDate()-1] += measure==='txns'?1:(r[measure]||0);
+    return arr;
+  };
+  const series = {};
+  for (const m of ['tonnage','gmv','txns']) series[m]={cur:daily(mtd,m,ref), prev:daily(lmtd,m,pStart), refDay:ref.getDate()};
+
+  const onboardIn=(a,b)=>sellersAll.filter(r=>{const d=r.onboarded||r.date; return d&&d>=a&&d<=b;}).length;
+  const onboardMTD=onboardIn(mStart,endOfDay(ref)), onboardLMTD=onboardIn(pStart,pEnd);
+
+  const byDim=(rs,key)=>{
+    const m=new Map();
+    for (const r of rs){
+      const k=r[key]; if(!k) continue;
+      const e=m.get(k)||{k, tonnage:0, gmv:0, n:0, recs:[]};
+      e.tonnage+=r.tonnage; e.gmv+=r.gmv; e.n++; e.recs.push(r); m.set(k,e);
+    }
+    return [...m.values()].sort((a,b)=>b.tonnage-a.tonnage||b.gmv-a.gmv||b.n-a.n);
+  };
+
+  // ── POC intelligence (MTD, since plans are monthly) ──
+  const pocMap=new Map();
+  const poc = k => { if(!pocMap.has(k)) pocMap.set(k,{poc:k,recs:[],sellers:new Set(),regions:new Set(),book:0,onboarded:0,pendingSellers:0,stuck:0,plan:0,tonnage:0,gmv:0}); return pocMap.get(k); };
+  for (const r of mtd) if (r.poc){ const p=poc(r.poc); p.recs.push(r); p.tonnage+=r.tonnage; p.gmv+=r.gmv; if(r.seller)p.sellers.add(r.seller); if(r.region)p.regions.add(r.region); }
+  for (const r of sellersAll) if (r.poc){
+    const p=poc(r.poc); p.book++;
+    const b=bucketOf(r.status);
+    if (b==='pending'||b==='moving') p.pendingSellers++;
+    const d=r.onboarded||r.date;
+    if (d && d>=mStart && d<=endOfDay(ref)) p.onboarded++;
+  }
+  for (const r of demand) if (r.poc) poc(r.poc).plan+=r.ttarget;
+  const stuckOrders = txnsAll.filter(r=>{
+    const b=bucketOf(r.shipstatus||r.status);
+    return (b==='pending'||b==='moving') && r.date && ageDays(r.date)>STUCK_DAYS;
+  });
+  for (const r of stuckOrders) if (r.poc) poc(r.poc).stuck++;
+  const pocRows=[...pocMap.values()].map(p=>({...p,
+    txnN:txnCount(p.recs), sellersActive:p.sellers.size,
+    achPct:p.plan>0?p.tonnage/p.plan*100:null, pending:p.pendingSellers+p.stuck,
+    region:[...p.regions].join(', ')
+  })).sort((a,b)=>b.tonnage-a.tonnage||b.gmv-a.gmv);
+  const lowPocs=pocRows.filter(p=>p.plan>0&&p.achPct<LOW_ACH_PCT);
+
+  // ── sellers / buyers ──
+  const funnel={pending:[],moving:[],done:[],dropped:[]};
+  for (const r of sellersAll) funnel[bucketOf(r.status)].push(r);
+  const inactive = sellersAll.filter(r=>(r.daysinactive!=null&&r.daysinactive>=INACTIVE_DAYS));
+  const shipDist={pending:[],moving:[],done:[],dropped:[]};
+  const ordDist={pending:[],moving:[],done:[],dropped:[]};
+  for (const r of txns){ ordDist[bucketOf(r.status)].push(r); if(r.shipstatus||r.status) shipDist[bucketOf(r.shipstatus||r.status)].push(r); }
+
+  // ── official targets from review tabs (fallback: demand plan) ──
+  const targetFor = key => {
+    const rows=reports.filter(b=>METRIC_KEYS[key].re.test(b.metric));
+    const groups={};
+    for (const b of rows){
+      const g=groups[b.group]=groups[b.group]||{group:b.group,target:0,achieved:0,lmtd:0,hasT:false};
+      if(b.target!=null){g.target+=b.target;g.hasT=true;}
+      if(b.achieved!=null)g.achieved+=b.achieved;
+      if(b.lmtd!=null)g.lmtd+=b.lmtd;
+    }
+    const list=Object.values(groups);
+    const overall=list.find(g=>g.group==='Overall');
+    const regional=list.filter(g=>g.group!=='Overall');
+    return {rows:regional.sort((a,b)=>b.achieved-a.achieved), overall, any:list.length>0};
+  };
+  const tgtTon=targetFor('tonnage');
+  const planTotal = demand.reduce((a,r)=>a+r.ttarget,0);
+  const monthTargetT = tgtTon.overall&&tgtTon.overall.target>0 ? tgtTon.overall.target
+                     : (tgtTon.rows.length? sum(tgtTon.rows,'target') : planTotal);
+  const targetSource = tgtTon.any ? 'Daily Review targets' : (planTotal>0?'Demand plan':'');
+  const mtdT=sum(mtd,'tonnage'), mtdG=sum(mtd,'gmv'), mtdN=txnCount(mtd);
+  const achPct = monthTargetT>0 ? mtdT/monthTargetT*100 : null;
+
+  // ── exceptions ──
+  const exceptions=[];
+  const push=(sev,title,detail,recs,headersFrom)=>exceptions.push({sev,title,detail,recs,headersFrom});
+  if (lowPocs.length) push('hi','POCs below '+LOW_ACH_PCT+'% of plan', lowPocs.map(p=>p.poc).slice(0,4).join(', ')+(lowPocs.length>4?' +'+(lowPocs.length-4):''), lowPocs.flatMap(p=>p.recs));
+  if (stuckOrders.length) push('hi','Orders stuck > '+STUCK_DAYS+' days','Not yet completed or cancelled — needs follow-up', stuckOrders);
+  if (inactive.length) push('med','Sellers inactive ≥ '+INACTIVE_DAYS+' days','No listings since onboarding', inactive);
+  const allRegions=uniq([...txnsAll,...sellersAll].map(r=>r.region));
+  const active7=new Set(txnsAll.filter(r=>r.date&&ageDays(r.date)<=7).map(r=>r.region));
+  const silent=allRegions.filter(r=>!active7.has(r)&&norm(r)!=='not mapped');
+  if (silent.length) push('med','Regions with no transactions in 7 days', silent.join(', '), txnsAll.filter(r=>silent.includes(r.region)));
+  if (demand.length){
+    const planned=new Set(demand.map(r=>nkey(r.poc)).filter(Boolean));
+    const noplan=pocRows.filter(p=>p.recs.length&&!planned.has(nkey(p.poc)));
+    if (noplan.length) push('low','POCs transacting without a demand plan', noplan.map(p=>p.poc).join(', '), noplan.flatMap(p=>p.recs));
+  }
+  const errTotal=sheets.reduce((a,s)=>a+s.errCells,0);
+  if (errTotal) push('low','Formula errors in source sheets', errTotal+' cells show #DIV/0! or similar', []);
+  const sevRank={hi:0,med:1,low:2};
+  exceptions.sort((a,b)=>sevRank[a.sev]-sevRank[b.sev]);
+
+  return {
+    verticals, sheets, range, ref, txnSheets, sellerSheets,
+    txnsAll, txns, sellersAll, sellersP, buyersDir, demand, reports,
+    mtd, lmtd, series, txnCount,
+    t:{period:sum(txns,'tonnage'), mtd:mtdT, lmtd:sum(lmtd,'tonnage')},
+    g:{period:sum(txns,'gmv'), mtd:mtdG, lmtd:sum(lmtd,'gmv')},
+    n:{period:txnCount(txns), mtd:mtdN, lmtd:txnCount(lmtd)},
+    onboardMTD, onboardLMTD,
+    byRegion:byDim(txns,'region'), byRH:byDim(txns,'rh'), byState:byDim(txns,'state'),
+    byPOC:byDim(txns,'poc'), bySeller:byDim(txns,'seller'), byBuyer:byDim(txns,'buyer'), byMaterial:byDim(txns,'material'),
+    pocRows, lowPocs, stuckOrders, funnel, inactive, shipDist, ordDist,
+    targetFor, monthTargetT, targetSource, achPct, planTotal,
+    exceptions, errTotal,
+  };
+}
+
+/* ═══ 09 CHARTS ═══════════════════════════════════════════════ */
+
+function sparkSVG(arr, upto){
+  const data = arr.slice(0, upto||arr.length);
+  if (!data.length || data.every(v=>!v)) return '';
+  const W=96,H=30,max=Math.max(...data,1e-9);
+  const pts=data.map((v,i)=>[(i/(Math.max(data.length-1,1)))*W, H-3-(v/max)*(H-7)]);
+  const line=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join('');
+  return '<svg class="spark" width="'+W+'" height="'+H+'" viewBox="0 0 '+W+' '+H+'">'+
+    '<path d="'+line+' L'+W+' '+H+' L0 '+H+' Z" fill="rgba(15,17,21,.055)" stroke="none"/>'+
+    '<path d="'+line+'" fill="none" stroke="#0f1115" stroke-width="1.6" stroke-linecap="round"/></svg>';
+}
+
+function trendSVG(container){
+  const m=state.trendMetric, S=MODEL.series[m];
+  const W=Math.max(container.clientWidth-4||900, 320), H=250, L=46, Rp=14, T=16, B=28;
+  const n=Math.max(S.cur.length,S.prev.length);
+  const cum=false;
+  const cur=S.cur.slice(0,S.refDay), prev=S.prev;
+  const max=Math.max(...cur,...prev,1e-9)*1.12;
+  const X=i=>L+(i/(n-1))*(W-L-Rp);
+  const Y=v=>T+(1-v/max)*(H-T-B);
+  const path=(arr,close)=>{
+    if(!arr.length) return '';
+    let d=arr.map((v,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(v).toFixed(1)).join('');
+    if(close) d+='L'+X(arr.length-1).toFixed(1)+' '+Y(0)+' L'+X(0)+' '+Y(0)+' Z';
+    return d;
+  };
+  const fmt=MK_FMT[m];
+  let grid='';
+  for(let i=0;i<=3;i++){
+    const v=max/1.12*i/3, y=Y(v);
+    grid+='<line x1="'+L+'" y1="'+y+'" x2="'+(W-Rp)+'" y2="'+y+'" stroke="#f0f1f4"/>'+
+      '<text x="'+(L-8)+'" y="'+(y+3.5)+'" text-anchor="end" font-size="10" fill="#98a1ae" class="num">'+fmt(v,true)+'</text>';
+  }
+  let xlab='';
+  for(let d=1;d<=n;d+=(n>20?5:2)) xlab+='<text x="'+X(d-1)+'" y="'+(H-9)+'" text-anchor="middle" font-size="10" fill="#98a1ae" class="num">'+d+'</text>';
+  const dotI=cur.length-1, dot=dotI>=0?'<circle cx="'+X(dotI)+'" cy="'+Y(cur[dotI])+'" r="3.5" fill="#0f1115" stroke="#fff" stroke-width="1.5"/>':'';
+  TREND={cur,prev,n,X,Y,L,W,Rp,fmt,m};
+  return '<svg id="trendsvg" width="'+W+'" height="'+H+'" style="display:block">'+grid+
+    '<path d="'+path(prev)+'" fill="none" stroke="#b3bac4" stroke-width="1.8" stroke-dasharray="4 5" stroke-linecap="round"/>'+
+    '<path d="'+path(cur,true)+'" fill="rgba(15,17,21,.05)" stroke="none"/>'+
+    '<path d="'+path(cur)+'" fill="none" stroke="#0f1115" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>'+
+    dot+'<line id="crosshair" x1="0" x2="0" y1="'+T+'" y2="'+(H-B)+'" stroke="#d5d9df" stroke-width="1" opacity="0"/>'+xlab+'</svg>';
+}
+const MK_FMT={
+  tonnage:(v,ax)=>ax? (v>=1000?nf(v/1000,1)+'k':nf(v,0)) : fmtT(v),
+  gmv:(v,ax)=>ax? (v>=1e7?nf(v/1e7,1)+'Cr':v>=1e5?nf(v/1e5,0)+'L':nf(v/1e3,0)+'K') : fmtCr(v),
+  txns:(v,ax)=>nf(v,0),
+};
+
+function barList(items,{fmt=fmtT, drillLabel='', max=10}={}){
+  if (!items.length) return '<div class="empty">No records match the current filters</div>';
+  const top=items.slice(0,max), mx=Math.max(...top.map(i=>i.tonnage||i.n),1e-9);
+  const total=items.reduce((a,i)=>a+(i.tonnage||i.n),0)||1;
+  return '<div class="blist">'+top.map(i=>{
+    const v=i.tonnage||i.n, id=regDrill({
+      title:i.k, sub:drillLabel+' — '+fmtT(i.tonnage)+' · '+fmtCr(i.gmv)+' · '+i.n+' rows', recs:i.recs});
+    return '<div class="brow" data-drill="'+id+'">'+
+      '<span class="bl" title="'+esc(i.k)+'">'+esc(i.k)+'</span>'+
+      '<span class="track"><span class="fill" style="width:'+(v/mx*100).toFixed(1)+'%"></span></span>'+
+      '<span class="bv num">'+fmt(i.tonnage!=null&&fmt!==fmtInt?i.tonnage:v)+'<span class="shr">'+nf(v/total*100,0)+'%</span></span></div>';
+  }).join('')+'</div>';
+}
+
+function distBar(groups, drillLabel){
+  const entries=BUCKET_ORDER.map(b=>({b,rows:groups[b]||[]})).filter(e=>e.rows.length);
+  const total=entries.reduce((a,e)=>a+e.rows.length,0);
+  if (!total) return '<div class="empty">No records</div>';
+  return '<div class="dist">'+entries.map(e=>
+    '<span style="width:'+(e.rows.length/total*100)+'%;background:'+BUCKET_META[e.b].color+'" title="'+BUCKET_META[e.b].label+': '+e.rows.length+'"></span>').join('')+
+  '</div><div class="dlegend">'+entries.map(e=>{
+    const id=regDrill({title:BUCKET_META[e.b].label+' — '+drillLabel, sub:e.rows.length+' records', recs:e.rows});
+    return '<div data-drill="'+id+'" style="cursor:pointer"><i style="background:'+BUCKET_META[e.b].color+'"></i>'+
+      BUCKET_META[e.b].label+' · <b class="num">'+e.rows.length+'</b></div>';
+  }).join('')+'</div>';
+}
+
+/* ═══ 10 RENDER ═══════════════════════════════════════════════ */
+
+function render(){
+  if (!PARSED) return;
+  DRILLS=[];
+  MODEL=buildModel();
+  renderTopbar(); renderFilterbar();
+  renderKPIs(); renderBrief(); renderTargets(); renderTrend();
+  renderPOC(); renderRegion(); renderOps(); renderSellers(); renderBuyers();
+  renderFeed(); renderExceptions(); renderGrid();
+  $('foot').innerHTML='Single source of truth: Google Sheets · '+PARSED.sheets.length+' worksheets across '+
+    MODEL.verticals.length+' workbooks · auto-sync every '+(POLL_MS/1000)+'s · snapshot '+esc(new Date(RAW.fetchedAt).toLocaleTimeString());
+}
+
+function panel(title, sub, body, actions){
+  return '<div class="panel"><div class="p-head"><div><h2>'+title+'</h2><p>'+sub+'</p></div>'+
+    (actions?'<div class="p-actions">'+actions+'</div>':'')+'</div>'+body+'</div>';
+}
+
+function renderTopbar(){
+  const vs=['All',...MODEL.verticals];
+  $('vseg').innerHTML=vs.map(v=>'<button class="'+(state.filters.vertical===v?'on':'')+'" data-fk="vertical" data-fv="'+esc(v)+'">'+esc(v)+'</button>').join('');
+  const t=new Date(RAW.fetchedAt);
+  $('sync').innerHTML='<span class="dot pulse"></span><span>'+(IS_GAS?'Live':'Demo')+' · synced '+
+    String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+'</span>';
+}
+
+function renderFilterbar(){
+  const F=state.filters;
+  const chips=DIMS.map(d=>{
+    const open=state.openMenu===d;
+    const opts=OPTIONS[d]||[];
+    return '<div class="fchip '+(F[d]?'on':'')+'" data-menu="'+d+'">'+
+      '<label>'+DIM_LABELS[d]+'</label><span class="val">'+esc(F[d]||'All')+'</span>'+
+      '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>'+
+      (open?'<div class="fmenu" data-stay>'+
+        (opts.length>8?'<input placeholder="Search '+DIM_LABELS[d].toLowerCase()+'…" data-msearch autofocus>':'')+
+        '<div class="mopts"><div class="mopt '+(!F[d]?'sel':'')+'" data-fk="'+d+'" data-fv="">All</div>'+
+        opts.map(o=>'<div class="mopt '+(F[d]===o?'sel':'')+'" data-fk="'+d+'" data-fv="'+esc(o)+'">'+esc(o)+'</div>').join('')+
+        '</div></div>':'')+
+      '</div>';
+  }).join('');
+  const presets='<div class="presets">'+PRESETS.map(p=>
+    '<button class="'+(state.preset===p[0]?'on':'')+'" data-preset="'+p[0]+'">'+p[1]+'</button>').join('')+'</div>'+
+    '<input type="date" class="dinput" id="d-from" value="'+esc(state.from)+'" title="From">'+
+    '<input type="date" class="dinput" id="d-to" value="'+esc(state.to)+'" title="To">';
+  const search='<div class="fsearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'+
+    '<input id="f-search" placeholder="Search anything…" value="'+esc(F.search)+'"></div>';
+  const hasAny=DIMS.some(d=>F[d])||F.search||state.preset!=='MTD';
+  $('filterbar').innerHTML=chips+presets+search+(hasAny?'<button class="clearbtn" data-clear>✕ Clear</button>':'');
+}
+
+function kpiCard(o){
+  return '<article class="kpi" '+(o.drill!=null?'data-drill="'+o.drill+'"':'')+'>'+
+    '<div class="lbl"><span>'+o.label+'</span>'+(o.tag?'<span class="tag">'+o.tag+'</span>':'')+'</div>'+
+    '<div class="val num">'+o.value+'</div>'+
+    '<div class="sub">'+(o.delta||'')+(o.sub?'<span>'+o.sub+'</span>':'')+'</div>'+
+    (o.spark||'')+'</article>';
+}
+
+function renderKPIs(){
+  const M=MODEL, P=periodLabel();
+  const txnDrill=regDrill({title:'Transactions — '+P, sub:M.txnSheets.map(s=>s.vertical+' · '+s.name).join('  |  '), recs:M.txns});
+  const mtdDrill=regDrill({title:'Transactions — MTD', sub:'Month to '+fmtDay(M.ref), recs:M.mtd});
+  const activeSellers=uniq(M.txns.map(r=>r.seller));
+  const gT=growthPct(M.t.mtd,M.t.lmtd), gG=growthPct(M.g.mtd,M.g.lmtd), gN=growthPct(M.n.mtd,M.n.lmtd), gO=growthPct(M.onboardMTD,M.onboardLMTD);
+  const balance=M.monthTargetT>0?Math.max(M.monthTargetT-M.t.mtd,0):null;
+  const daysLeft=daysInMonth(M.ref)-M.ref.getDate();
+  const cards=[
+    {label:'GMV', tag:P, value:fmtCr(M.g.period), delta:deltaChip(gG,'LMTD'), spark:sparkSVG(M.series.gmv.cur,M.series.gmv.refDay), drill:txnDrill},
+    {label:'Tonnage', tag:P, value:fmtT(M.t.period), delta:deltaChip(gT,'LMTD'), spark:sparkSVG(M.series.tonnage.cur,M.series.tonnage.refDay), drill:txnDrill},
+    {label:'Transactions', tag:P, value:fmtInt(M.n.period), delta:deltaChip(gN,'LMTD'), spark:sparkSVG(M.series.txns.cur,M.series.txns.refDay), drill:txnDrill},
+    {label:'Active Sellers', tag:P, value:fmtInt(activeSellers.length), sub:fmtInt(M.sellersAll.length)+' in base', drill:regDrill({title:'Active sellers — '+P, sub:'Sellers with ≥1 transaction', recs:M.txns})},
+    {label:'Sellers Onboarded', tag:P, value:fmtInt(M.sellersP.length), delta:deltaChip(gO,'LMTD'), drill:regDrill({title:'Sellers onboarded — '+P, sub:M.sellerSheets.map(s=>s.vertical+' · '+s.name).join('  |  '), recs:M.sellersP})},
+    {label:'Target Achieved', tag:'MTD', value:fmtPct(M.achPct), sub:M.targetSource?('of '+fmtT(M.monthTargetT)+' · '+M.targetSource):'no target found', drill:mtdDrill},
+    {label:'Balance to Target', tag:'MTD', value:balance==null?'—':fmtT(balance), sub:daysLeft+' days left', drill:mtdDrill},
+    {label:'MTD vs LMTD', tag:'MTD', value:(gT==null?'—':(gT>=0?'+':'')+nf(gT,gT!=null&&Math.abs(gT)<10?1:0)+'%'), sub:'GMV '+(gG==null?'—':(gG>=0?'+':'')+nf(gG,0)+'%'), drill:mtdDrill},
+  ];
+  $('s-kpi').innerHTML='<div class="kpis">'+cards.map(kpiCard).join('')+'</div>';
+}
+
+function renderBrief(){
+  const M=MODEL, L=[];
+  const elapsed=M.ref.getDate()/daysInMonth(M.ref)*100;
+  const gT=growthPct(M.t.mtd,M.t.lmtd);
+  L.push('<b>'+fmtCr(M.g.mtd)+'</b> GMV on <b>'+fmtT(M.t.mtd)+'</b> across <b>'+fmtInt(M.n.mtd)+'</b> transactions MTD'+
+    (gT!=null?' — tonnage '+(gT>=0?'up <b>'+nf(gT,0)+'%</b>':'down <b>'+nf(-gT,0)+'%</b>')+' vs LMTD.':'.'));
+  if (M.achPct!=null) L.push('Month is <b>'+nf(elapsed,0)+'%</b> elapsed; tonnage plan is <b>'+nf(M.achPct,0)+'%</b> achieved — balance <b>'+fmtT(Math.max(M.monthTargetT-M.t.mtd,0))+'</b>.');
+  if (M.byRegion.length){
+    const top=M.byRegion[0], share=M.t.period?top.tonnage/M.t.period*100:0;
+    L.push('<b>'+esc(top.k)+'</b> leads with <b>'+fmtT(top.tonnage)+'</b> ('+nf(share,0)+'% of volume)'+
+      (M.byRegion.length>1?'; '+esc(M.byRegion[M.byRegion.length-1].k)+' is the softest region.':'.'));
+  }
+  if (M.pocRows.length){
+    const t=M.pocRows[0];
+    L.push('Top POC: <b>'+esc(t.poc)+'</b> — '+fmtT(t.tonnage)+', '+fmtCr(t.gmv)+', '+t.sellersActive+' active sellers.'+
+      (M.lowPocs.length?' <b>'+M.lowPocs.length+'</b> POC'+(M.lowPocs.length>1?'s are':' is')+' below '+LOW_ACH_PCT+'% of plan.':''));
+  }
+  if (M.byMaterial.length){
+    const m=M.byMaterial[0], share=M.t.period?m.tonnage/M.t.period*100:0;
+    L.push('Top material: <b>'+esc(m.k)+'</b> at '+nf(share,0)+'% of tonnage.');
+  }
+  L.push('<b>'+fmtInt(M.sellersP.length)+'</b> sellers onboarded in period; <b>'+fmtInt(M.inactive.length)+'</b> inactive ≥ '+INACTIVE_DAYS+' days.');
+  const hi=M.exceptions.filter(x=>x.sev==='hi').length;
+  L.push(M.exceptions.length?('<b>'+M.exceptions.length+'</b> attention item'+(M.exceptions.length>1?'s':'')+(hi?' — <b>'+hi+'</b> high priority.':'.')):'No open exceptions — book is clean.');
+
+  const topBuyerShare=M.byBuyer.length&&M.g.period?M.byBuyer[0].gmv/M.g.period*100:0;
+  const H=[
+    ['Pace', M.achPct==null?'a':(M.achPct>=elapsed*0.9?'g':M.achPct>=elapsed*0.5?'a':'r')],
+    ['Growth', gT==null?'a':(gT>=0?'g':'r')],
+    ['Concentration', topBuyerShare>60?'r':topBuyerShare>40?'a':'g'],
+    ['Data quality', M.errTotal?'a':'g'],
+  ];
+  $('s-brief').innerHTML=panel('Operational Brief','Generated from live sheet data · '+esc(new Date(RAW.fetchedAt).toLocaleTimeString()),
+    '<div class="health" style="margin-bottom:6px">'+H.map(h=>'<div class="hchip"><span class="hdot '+h[1]+'"></span>'+h[0]+'</div>').join('')+'</div>'+
+    '<ul class="insights">'+L.map(l=>'<li><span>'+l+'</span></li>').join('')+'</ul>');
+}
+
+function renderTargets(){
+  const M=MODEL, key=state.tmetric, MK=METRIC_KEYS[key];
+  const T=M.targetFor(key);
+  const tabs=Object.entries(METRIC_KEYS).map(([k,v])=>
+    '<button class="tab '+(k===state.tmetric?'on':'')+'" data-tmetric="'+k+'">'+v.label+'</button>').join('');
+  let body;
+  if (T.any){
+    const rows=[...T.rows, ...(T.overall?[{...T.overall, group:'All regions', bold:true}]:[])];
+    body='<div class="twrap"><table><thead><tr><th>Region</th><th class="num">Target</th><th class="num">Achieved</th>'+
+      '<th style="min-width:150px">Progress</th><th class="num">Balance</th><th class="num">LMTD</th><th class="num">Growth</th></tr></thead><tbody>'+
+      rows.map(r=>{
+        const pct=r.target>0?r.achieved/r.target*100:null;
+        const cls=pct==null?'':pct<LOW_ACH_PCT?'low':pct<90?'mid':'';
+        const growth=growthPct(r.achieved,r.lmtd);
+        return '<tr'+(r.bold?' style="font-weight:700;border-top:2px solid var(--line)"':'')+'>'+
+          '<td>'+esc(r.group)+'</td><td class="num">'+MK.fmt(r.target)+'</td><td class="num">'+MK.fmt(r.achieved)+'</td>'+
+          '<td><div class="cellbar"><div class="track"><div class="fill '+cls+'" style="width:'+Math.min(pct||0,100)+'%"></div></div>'+
+          '<span class="num" style="font-size:11.5px;font-weight:700">'+fmtPct(pct)+'</span></div></td>'+
+          '<td class="num">'+(r.target>0?MK.fmt(Math.max(r.target-r.achieved,0)):'—')+'</td>'+
+          '<td class="num" style="color:var(--ink-2)">'+MK.fmt(r.lmtd)+'</td>'+
+          '<td class="num">'+deltaChip(growth)+'</td></tr>';
+      }).join('')+'</tbody></table></div>'+
+      '<div class="gnote">Source: review tabs in the Google Sheets ('+uniq(M.reports.map(b=>b.sheet)).map(esc).join(', ')+') — numbers as maintained by the team.</div>';
+  } else if (M.demand.length){
+    const byPoc=new Map();
+    M.demand.forEach(r=>{ if(r.poc) byPoc.set(r.poc,(byPoc.get(r.poc)||0)+r.ttarget); });
+    const act=new Map(); M.mtd.forEach(r=>{ if(r.poc) act.set(r.poc,(act.get(r.poc)||0)+r.tonnage); });
+    body='<div class="twrap"><table><thead><tr><th>POC</th><th class="num">Plan (MT)</th><th class="num">Actual MTD</th><th style="min-width:150px">Progress</th><th class="num">Balance</th></tr></thead><tbody>'+
+      [...byPoc.entries()].sort((a,b)=>b[1]-a[1]).map(([p,plan])=>{
+        const a=act.get(p)||0, pct=plan>0?a/plan*100:null;
+        return '<tr><td>'+esc(p)+'</td><td class="num">'+fmtT(plan)+'</td><td class="num">'+fmtT(a)+'</td>'+
+          '<td><div class="cellbar"><div class="track"><div class="fill '+(pct<LOW_ACH_PCT?'low':pct<90?'mid':'')+'" style="width:'+Math.min(pct||0,100)+'%"></div></div>'+
+          '<span class="num" style="font-size:11.5px;font-weight:700">'+fmtPct(pct)+'</span></div></td>'+
+          '<td class="num">'+fmtT(Math.max(plan-a,0))+'</td></tr>';
+      }).join('')+'</tbody></table></div><div class="gnote">Source: demand-planning tab (no review-tab targets found for the current filter).</div>';
+  } else {
+    body='<div class="empty">No targets found in the connected sheets for this view.</div>';
+  }
+  $('s-target').innerHTML=panel('Target vs Achievement','Are we on plan, and where is the gap?',body,tabs);
+}
+
+function renderTrend(){
+  const tabs=['tonnage','gmv','txns'].map(k=>
+    '<button class="tab '+(k===state.trendMetric?'on':'')+'" data-trend="'+k+'">'+METRIC_KEYS[k==='txns'?'txns':k].label+'</button>').join('');
+  const M=MODEL, m=state.trendMetric;
+  const cur=M[m==='tonnage'?'t':m==='gmv'?'g':'n'];
+  const legend='<div class="trend-legend"><span><span class="tl-solid"></span>This month</span><span><span class="tl-dash"></span>Last month</span>'+
+    '<span style="margin-left:auto" class="num"><b>'+MK_FMT[m](cur.mtd)+'</b> MTD · <span style="color:var(--ink-3)">'+MK_FMT[m](cur.lmtd)+' LMTD</span></span></div>';
+  $('s-trend').innerHTML=panel('Operational Performance','Daily rhythm — this month against the same days last month',
+    legend+'<div class="trendwrap" id="trendbox"></div>',tabs);
+  const box=$('trendbox');
+  box.innerHTML=trendSVG(box);
+  const svg=$('trendsvg');
+  svg.addEventListener('mousemove',trendHover);
+  svg.addEventListener('mouseleave',()=>{ $('ctip').style.opacity=0; const c=$('crosshair'); if(c)c.setAttribute('opacity',0); });
+}
+function trendHover(e){
+  if(!TREND) return;
+  const svg=$('trendsvg'), r=svg.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  const i=Math.round((x-TREND.L)/((TREND.W-TREND.L-TREND.Rp)/(TREND.n-1)));
+  if (i<0||i>=TREND.n) return;
+  const c=$('crosshair'); c.setAttribute('x1',TREND.X(i)); c.setAttribute('x2',TREND.X(i)); c.setAttribute('opacity',1);
+  const cv=TREND.cur[i], pv=TREND.prev[i];
+  const tip=$('ctip');
+  tip.innerHTML='<b>Day '+(i+1)+'</b><div class="tt-sub">This month: <b>'+(cv!=null?TREND.fmt(cv):'—')+'</b></div>'+
+    '<div class="tt-sub">Last month: '+(pv!=null?TREND.fmt(pv):'—')+'</div>';
+  tip.style.opacity=1;
+  tip.style.left=Math.min(e.clientX+14, innerWidth-260)+'px';
+  tip.style.top=(e.clientY-14)+'px';
+}
+
+function renderPOC(){
+  const M=MODEL;
+  if (!M.pocRows.length){ $('s-poc').innerHTML=panel('POC Intelligence','Who is delivering, who needs help?','<div class="empty">No POC-tagged records for the current filters</div>'); return; }
+  const rows=M.pocRows.map((p,i)=>{
+    const id=regDrill({title:'POC — '+p.poc, sub:'MTD transactions · '+fmtT(p.tonnage)+' · '+fmtCr(p.gmv), recs:p.recs});
+    const cls=p.achPct==null?'':p.achPct<LOW_ACH_PCT?'low':p.achPct<90?'mid':'';
+    return '<tr class="click" data-drill="'+id+'">'+
+      '<td><span class="rank r'+(i+1<=3?i+1:'')+'">'+(i+1)+'</span></td>'+
+      '<td style="font-weight:600">'+(p.plan>0&&p.achPct<LOW_ACH_PCT?'<span class="flag" style="background:var(--bad)"></span>':'')+esc(p.poc)+'</td>'+
+      '<td>'+esc(p.region||'—')+'</td>'+
+      '<td class="num">'+fmtInt(p.txnN)+'</td><td class="num">'+fmtT(p.tonnage)+'</td><td class="num">'+fmtCr(p.gmv)+'</td>'+
+      '<td class="num">'+fmtInt(p.sellersActive)+'</td><td class="num">'+fmtInt(p.onboarded)+'</td><td class="num">'+fmtInt(p.book)+'</td>'+
+      '<td class="num">'+(p.plan>0?fmtT(p.plan):'—')+'</td>'+
+      '<td><div class="cellbar"><div class="track"><div class="fill '+cls+'" style="width:'+Math.min(p.achPct||0,100)+'%"></div></div>'+
+      '<span class="num" style="font-size:11px;font-weight:700">'+fmtPct(p.achPct)+'</span></div></td>'+
+      '<td class="num">'+(p.pending?'<span class="chip warn">'+p.pending+'</span>':'<span style="color:var(--ink-3)">0</span>')+'</td></tr>';
+  }).join('');
+  $('s-poc').innerHTML=panel('POC Intelligence','Leaderboard — MTD delivery vs plan, workload and pending follow-ups',
+    '<div class="twrap"><table><thead><tr><th>#</th><th>POC</th><th>Region</th><th class="num">Txns</th><th class="num">Tonnage</th>'+
+    '<th class="num">GMV</th><th class="num">Active Sellers</th><th class="num">Onboarded</th><th class="num">Book</th>'+
+    '<th class="num">Plan</th><th style="min-width:140px">Achievement</th><th class="num">Pending</th></tr></thead><tbody>'+rows+'</tbody></table></div>');
+}
+
+function renderRegion(){
+  const M=MODEL, P=periodLabel();
+  $('s-region').innerHTML=panel('Region Intelligence','Where the volume is — by region, regional head and state · '+P,
+    '<div class="cols c3">'+
+    '<div><div class="coltitle">By Region</div>'+barList(M.byRegion,{drillLabel:'Region'})+'</div>'+
+    '<div><div class="coltitle">By Regional Head</div>'+barList(M.byRH,{drillLabel:'RH'})+'</div>'+
+    '<div><div class="coltitle">By State</div>'+barList(M.byState,{drillLabel:'State',max:8})+'</div>'+
+    '</div>');
+}
+
+function renderOps(){
+  const M=MODEL, P=periodLabel();
+  const realization=M.t.period>0?M.g.period/M.t.period:null;
+  const invQty=sum(M.txns,'invqty');
+  const coverage=M.t.period>0?invQty/M.t.period*100:null;
+  const stuckId=regDrill({title:'Stuck orders', sub:'Open beyond '+STUCK_DAYS+' days', recs:M.stuckOrders});
+  const stats=[
+    ['₹ / MT realization', realization==null?'—':fmtCr(realization), regDrill({title:'Transactions — '+P,sub:'Realization base',recs:M.txns})],
+    ['Invoice coverage', fmtPct(coverage), regDrill({title:'Invoiced quantity',sub:'Invoice Qty vs Booked Qty',recs:M.txns.filter(r=>r.invqty>0)})],
+    ['Stuck orders', fmtInt(M.stuckOrders.length), stuckId],
+    ['Materials moved', fmtInt(M.byMaterial.length), regDrill({title:'Materials',sub:'Distinct materials in period',recs:M.txns})],
+  ];
+  const stuckRows=M.stuckOrders.slice(0,5).map(r=>{
+    const id=regDrill({title:'Order '+(r.id||''), sub:esc(r.seller)+' → '+esc(r.buyer), recs:[r]});
+    return '<tr class="click" data-drill="'+id+'"><td class="num">'+esc(r.id||'—')+'</td><td>'+esc(r.seller)+'</td><td>'+esc(r.buyer)+'</td>'+
+      '<td>'+esc(r.shipstatus||r.status||'—')+'</td><td class="num">'+ageDays(r.date)+'d</td></tr>';
+  }).join('');
+  $('s-ops').innerHTML=panel('Procurement &amp; Shipment','Is material moving, invoicing clean, anything stuck? · '+P,
+    '<div class="statrow">'+stats.map(s=>'<div class="stat" data-drill="'+s[2]+'"><div class="sv num">'+s[1]+'</div><div class="sl">'+s[0]+'</div></div>').join('')+'</div>'+
+    '<div class="cols c2">'+
+    '<div><div class="coltitle">Order Status</div>'+distBar(M.ordDist,'orders')+'</div>'+
+    '<div><div class="coltitle">Shipment Status</div>'+distBar(M.shipDist,'shipments')+'</div>'+
+    '</div>'+
+    (stuckRows?'<div class="coltitle" style="margin-top:20px">Longest-pending orders</div><div class="twrap"><table><thead><tr><th>ID</th><th>Seller</th><th>Buyer</th><th>Status</th><th class="num">Age</th></tr></thead><tbody>'+stuckRows+'</tbody></table></div>':''));
+}
+
+function renderSellers(){
+  const M=MODEL;
+  const newM=M.sellersP.length;
+  const doneN=M.funnel.done.length, total=M.sellersAll.length;
+  const stats=[
+    ['Seller base', fmtInt(total), regDrill({title:'Seller base',sub:M.sellerSheets.map(s=>s.vertical+' · '+s.name).join(' | '),recs:M.sellersAll})],
+    ['Onboarding complete', fmtInt(doneN)+(total?' <span style="font-size:11px;color:var(--ink-3)">'+nf(doneN/total*100,0)+'%</span>':''), regDrill({title:'Onboarding complete',sub:'Completed / active sellers',recs:M.funnel.done})],
+    ['New in period', fmtInt(newM), regDrill({title:'New sellers',sub:periodLabel(),recs:M.sellersP})],
+    ['Inactive ≥ '+INACTIVE_DAYS+'d', fmtInt(M.inactive.length), regDrill({title:'Inactive sellers',sub:'No listings for '+INACTIVE_DAYS+'+ days',recs:M.inactive})],
+  ];
+  $('s-seller').innerHTML=panel('Seller Intelligence','Base, onboarding funnel and top suppliers',
+    '<div class="statrow">'+stats.map(s=>'<div class="stat" data-drill="'+s[2]+'"><div class="sv num">'+s[1]+'</div><div class="sl">'+s[0]+'</div></div>').join('')+'</div>'+
+    '<div class="coltitle">Onboarding funnel</div>'+distBar(M.funnel,'sellers')+
+    '<div class="coltitle" style="margin-top:20px">Top sellers by volume · '+periodLabel()+'</div>'+barList(M.bySeller,{drillLabel:'Seller',max:7}));
+}
+
+function renderBuyers(){
+  const M=MODEL;
+  const transacting=M.byBuyer.length;
+  const repeat=M.byBuyer.filter(b=>b.n>1).length;
+  const payMap={};
+  M.buyersDir.forEach(r=>{ if(r.payterms) payMap[r.payterms]=(payMap[r.payterms]||0)+1; });
+  const payHtml=Object.keys(payMap).length?
+    '<div class="coltitle" style="margin-top:20px">Payment terms mix (directory)</div><div class="dlegend">'+
+    Object.entries(payMap).sort((a,b)=>b[1]-a[1]).slice(0,6).map(([k,v])=>'<div><i style="background:#98a1ae"></i>'+esc(k)+' · <b class="num">'+v+'</b></div>').join('')+'</div>':'';
+  const stats=[
+    ['Buyers transacting', fmtInt(transacting), regDrill({title:'Buyers transacting',sub:periodLabel(),recs:M.txns})],
+    ['Repeat buyers', fmtInt(repeat), regDrill({title:'Repeat buyers',sub:'>1 transaction in period',recs:M.byBuyer.filter(b=>b.n>1).flatMap(b=>b.recs)})],
+    ['Buyer directory', fmtInt(M.buyersDir.length), regDrill({title:'Buyer directory',sub:'From buyer master tabs',recs:M.buyersDir})],
+  ];
+  $('s-buyer').innerHTML=panel('Buyer Intelligence','Demand side — who is lifting material',
+    '<div class="statrow">'+stats.map(s=>'<div class="stat" data-drill="'+s[2]+'"><div class="sv num">'+s[1]+'</div><div class="sl">'+s[0]+'</div></div>').join('')+'</div>'+
+    '<div class="coltitle">Top buyers by volume · '+periodLabel()+'</div>'+barList(M.byBuyer,{drillLabel:'Buyer',max:7})+payHtml);
+}
+
+function renderFeed(){
+  const M=MODEL;
+  const evs=[];
+  for (const r of M.txnsAll) if (r.date) evs.push({d:r.date, kind:'txn', r,
+    main:(r.id?r.id+' — ':'')+ (r.seller||'?')+' → '+(r.buyer||'?'),
+    meta:[fmtT(r.tonnage),fmtCr(r.gmv),r.region,r.poc&&'POC '+r.poc,r.vertical].filter(Boolean).join(' · ')});
+  for (const r of M.sellersAll){ const d=r.onboarded||r.date; if (d) evs.push({d, kind:'new', r,
+    main:'Seller '+(bucketOf(r.status)==='done'?'onboarded':'added')+' — '+r.seller,
+    meta:[r.region,r.state,r.poc&&'POC '+r.poc,r.vertical].filter(Boolean).join(' · ')}); }
+  evs.sort((a,b)=>b.d-a.d);
+  const rows=evs.slice(0,30).map(e=>{
+    const id=regDrill({title:e.main, sub:fmtDT(e.d), recs:[e.r]});
+    return '<div class="fev" data-drill="'+id+'"><div class="fic '+(e.kind==='txn'?'txn':'')+'">'+(e.kind==='txn'?'TX':'S+')+'</div>'+
+      '<div style="min-width:0"><div class="fmain">'+esc(e.main)+'</div><div class="fmeta">'+esc(e.meta)+'</div></div>'+
+      '<div class="ftime">'+timeAgo(e.d)+'</div></div>';
+  }).join('');
+  $('s-feed').innerHTML=panel('Live Activity','Latest movements across both books',
+    rows?'<div class="feed">'+rows+'</div>':'<div class="empty">No dated activity found</div>');
+}
+
+function renderExceptions(){
+  const M=MODEL;
+  const rows=M.exceptions.map(x=>{
+    const id=x.recs.length?regDrill({title:x.title, sub:x.detail, recs:x.recs}):null;
+    return '<div class="xrow '+x.sev+'" '+(id!=null?'data-drill="'+id+'"':'')+'><span class="xdot"></span>'+
+      '<div style="min-width:0"><div class="xt">'+esc(x.title)+'</div><div class="xd">'+esc(x.detail)+'</div></div>'+
+      '<span class="xn num">'+(x.recs.length||'!')+'</span></div>';
+  }).join('');
+  $('s-exc').innerHTML=panel('Attention Required','Exceptions the data is raising right now',
+    rows?'<div class="exc">'+rows+'</div>':'<div class="allgood">✓ Nothing needs attention — all clear.</div>');
+}
+
+/* ═══ 11 DRILL & GRID ═════════════════════════════════════════ */
+
+function regDrill(p){ DRILLS.push(p); return DRILLS.length-1; }
+
+function openDrill(i){
+  const p=DRILLS[i]; if(!p) return;
+  const recs=p.recs||[];
+  const byKey={};
+  recs.forEach(r=>{ (byKey[r.sheetKey]=byKey[r.sheetKey]||[]).push(r); });
+  const t=sum(recs,'tonnage'), g=sum(recs,'gmv');
+  let body='';
+  for (const [key,rs] of Object.entries(byKey)){
+    const sheet=PARSED.sheets.find(s=>s.key===key);
+    if (!sheet||!sheet.headers) continue;
+    body+='<div class="coltitle" style="margin:14px 0 8px">'+esc(sheet.vertical+' · '+sheet.name)+' — '+rs.length+' rows</div>'+
+      '<div class="twrap" style="max-height:340px;overflow:auto;border:1px solid var(--line);border-radius:10px"><table><thead><tr>'+
+      sheet.headers.map(h=>'<th>'+esc(h)+'</th>').join('')+'</tr></thead><tbody>'+
+      rs.slice(0,300).map(r=>'<tr>'+r._row.map(c=>'<td>'+fmtCell(c)+'</td>').join('')+'</tr>').join('')+
+      '</tbody></table></div>'+(rs.length>300?'<div class="gnote">Showing 300 of '+rs.length+' rows</div>':'');
+  }
+  if (!body) body='<div class="empty">No underlying rows for this figure</div>';
+  $('drawer').innerHTML='<div class="dhead"><div style="min-width:0"><h3>'+esc(p.title)+'</h3><p>'+p.sub+'</p></div>'+
+    '<button class="iconbtn" data-close style="margin-left:auto"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>'+
+    '<div class="dstats"><span class="chip">'+recs.length+' records</span>'+(t?'<span class="chip">'+fmtT(t)+'</span>':'')+(g?'<span class="chip">'+fmtCr(g)+'</span>':'')+'</div>'+
+    '<div class="dbody">'+body+'</div>';
+  $('drawer').classList.add('open'); $('scrim').classList.add('open');
+}
+function closeDrawer(){ $('drawer').classList.remove('open'); $('scrim').classList.remove('open'); }
+
+function renderGrid(){
+  const M=MODEL;
+  const chips=M.sheets.map(s=>'<button class="tab '+(state.grid===s.key?'on':'')+'" data-grid="'+esc(s.key)+'">'+
+    esc(s.vertical)+' · '+esc(s.name)+'</button>').join('');
+  const sheet=M.sheets.find(s=>s.key===state.grid)||M.sheets[0];
+  let table='<div class="empty">No sheet selected</div>', note='';
+  if (sheet){
+    if (sheet.headers){
+      let recs=sheet.recs.filter(passDims);
+      if (state.gridSearch){ const q=state.gridSearch.toLowerCase(); recs=recs.filter(r=>r._row.join(' ').toLowerCase().includes(q)); }
+      if (state.gridSort&&state.gridSort.key===sheet.key){
+        const {col,dir}=state.gridSort;
+        recs=[...recs].sort((a,b)=>{
+          const x=a._row[col], y=b._row[col];
+          const nx=toNum(x), ny=toNum(y);
+          const c=(nx!=null&&ny!=null)?nx-ny:String(x==null?'':x).localeCompare(String(y==null?'':y));
+          return dir*c;
+        });
+      }
+      table='<div class="gridtable"><table><thead><tr>'+sheet.headers.map((h,i)=>{
+          const s=state.gridSort&&state.gridSort.key===sheet.key&&state.gridSort.col===i;
+          return '<th data-sort="'+i+'">'+esc(h)+(s?(state.gridSort.dir>0?' ↑':' ↓'):'')+'</th>';
+        }).join('')+'</tr></thead><tbody>'+
+        recs.slice(0,400).map(r=>'<tr>'+r._row.map(c=>'<td>'+fmtCell(c)+'</td>').join('')+'</tr>').join('')+
+        '</tbody></table></div>';
+      note='<div class="gnote">'+Math.min(recs.length,400)+' of '+recs.length+' rows shown · global filters applied · click a column to sort</div>';
+      GRID_VIEW={headers:sheet.headers, rows:recs.map(r=>r._row)};
+    } else {
+      table='<div class="gridtable"><table><tbody>'+
+        sheet.values.slice(0,300).map(r=>'<tr>'+r.map(c=>'<td>'+fmtCell(c)+'</td>').join('')+'</tr>').join('')+
+        '</tbody></table></div>';
+      note='<div class="gnote">Formatted review tab — shown raw ('+sheet.values.length+' rows)</div>';
+      GRID_VIEW={headers:null, rows:sheet.values};
+    }
+  }
+  $('s-grid').innerHTML=panel('Data Explorer','Every worksheet, searchable — the dashboard hides nothing',
+    '<div class="gridchips">'+chips+'</div>'+
+    '<div style="display:flex;gap:8px;margin-bottom:10px;align-items:center">'+
+    '<div class="fsearch" style="max-width:260px"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'+
+    '<input id="grid-search" placeholder="Search this sheet…" value="'+esc(state.gridSearch)+'"></div>'+
+    '<button class="tab" data-export>Export CSV</button></div>'+table+note);
+}
+let GRID_VIEW=null;
+function exportCSV(){
+  if (!GRID_VIEW) return;
+  const enc=v=>{ const s=String(v==null?'':v); return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s; };
+  const lines=[];
+  if (GRID_VIEW.headers) lines.push(GRID_VIEW.headers.map(enc).join(','));
+  GRID_VIEW.rows.forEach(r=>lines.push(r.map(enc).join(',')));
+  const blob=new Blob(['﻿'+lines.join('\n')],{type:'text/csv'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob); a.download='omp-export.csv'; a.click();
+  URL.revokeObjectURL(a.href);
+  toast('CSV exported');
+}
+
+/* ═══ 12 EVENTS ═══════════════════════════════════════════════ */
+
+let searchTimer=null;
+document.addEventListener('click', e=>{
+  const t=e.target;
+  const menu=t.closest('[data-menu]');
+  const opt=t.closest('[data-fk]');
+  if (opt){
+    const k=opt.dataset.fk, v=opt.dataset.fv;
+    if (k==='vertical') state.filters.vertical=v||'All'; else state.filters[k]=v;
+    state.openMenu=null; closeDrawer(); render(); return;
+  }
+  if (t.closest('[data-stay]')) return;
+  if (menu){ state.openMenu=state.openMenu===menu.dataset.menu?null:menu.dataset.menu; renderFilterbar(); focusMenuSearch(); return; }
+  if (state.openMenu){ state.openMenu=null; renderFilterbar(); }
+  const preset=t.closest('[data-preset]'); if (preset){ state.preset=preset.dataset.preset; state.from=state.to=''; closeDrawer(); render(); return; }
+  const trend=t.closest('[data-trend]'); if (trend){ state.trendMetric=trend.dataset.trend; renderTrend(); return; }
+  const tm=t.closest('[data-tmetric]'); if (tm){ state.tmetric=tm.dataset.tmetric; renderTargets(); return; }
+  const grid=t.closest('[data-grid]'); if (grid){ state.grid=grid.dataset.grid; state.gridSort=null; state.gridSearch=''; renderGrid(); return; }
+  const sort=t.closest('[data-sort]'); if (sort){
+    const col=+sort.dataset.sort, cur=state.gridSort;
+    state.gridSort={key:state.grid, col, dir:cur&&cur.col===col&&cur.key===state.grid?-cur.dir:1};
+    renderGrid(); return;
+  }
+  const drill=t.closest('[data-drill]'); if (drill){ openDrill(+drill.dataset.drill); return; }
+  if (t.closest('[data-close]')){ closeDrawer(); return; }
+  if (t.closest('[data-clear]')){
+    for (const d of DIMS) state.filters[d]='';
+    state.filters.search=''; state.preset='MTD'; state.from=state.to='';
+    closeDrawer(); render(); return;
+  }
+  if (t.closest('[data-refresh]')){ loadData(true); return; }
+  if (t.closest('[data-export]')){ exportCSV(); return; }
+});
+document.addEventListener('input', e=>{
+  const t=e.target;
+  if (t.id==='f-search'){ clearTimeout(searchTimer); searchTimer=setTimeout(()=>{ state.filters.search=t.value.trim(); render(); refocus('f-search'); },260); }
+  if (t.id==='grid-search'){ clearTimeout(searchTimer); searchTimer=setTimeout(()=>{ state.gridSearch=t.value.trim(); renderGrid(); refocus('grid-search'); },220); }
+  if (t.hasAttribute('data-msearch')){
+    const q=t.value.toLowerCase();
+    t.closest('.fmenu').querySelectorAll('.mopt').forEach(o=>{ o.style.display=o.textContent.toLowerCase().includes(q)?'':'none'; });
+  }
+});
+document.addEventListener('change', e=>{
+  if (e.target.id==='d-from'||e.target.id==='d-to'){
+    state.from=$('d-from').value; state.to=$('d-to').value;
+    if (state.from||state.to) state.preset='CUSTOM';
+    render();
+  }
+});
+document.addEventListener('keydown', e=>{ if (e.key==='Escape'){ closeDrawer(); if(state.openMenu){state.openMenu=null;renderFilterbar();} } });
+function refocus(id){ const el=$(id); if(el){ el.focus(); el.setSelectionRange(el.value.length,el.value.length);} }
+function focusMenuSearch(){ const el=document.querySelector('[data-msearch]'); if(el) el.focus(); }
+let resizeTimer=null;
+window.addEventListener('resize', ()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(()=>{ if(MODEL) renderTrend(); },200); });
+
+/* ═══ 13 MOCK — demo data so the file runs before deployment ══ */
+
+function mockSnapshot(){
+  let seed=7; const rnd=()=>{ seed=(seed*16807)%2147483647; return seed/2147483647; };
+  const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(Math.floor(rnd()*23)).padStart(2,'0')+':'+String(Math.floor(rnd()*59)).padStart(2,'0')+':00';
+  const t=new Date(); t.setHours(0,0,0,0);
+  const CFG={
+    Metal:{pocs:['Amit Jha','Rohit Verma','Sana Iqbal'], mats:['MS Scrap','Aluminium Extrusion','Copper Wire','Lead Ingot'],
+      sellers:['Ardee Industries','Kamala Metachem','NKW Metals','Bhagwati Alloys','Shree Metal Corp','Balaji Traders'],
+      buyers:['Ekta Enterprises','Raj Metal Recycling','Gravita India','Pondy Oxides'], states:['Andhra Pradesh','Punjab','Gujarat']},
+    Plastic:{pocs:['Uday Kiran','Meera Shah','Vikram Rao'], mats:['PET Bottle Scrap - Clear','PET Flakes','HDPE Regrind','LDPE Film'],
+      sellers:['Mahaan Polyplast','Arman Enterprises','Patels Trading Co','Sri Balaji Polymers','GreenCycle Plast','Om Plastics'],
+      buyers:['Shri Man Narayan Polytax','AMC Plastic Traders','Ganesha Ecosphere','JB Ecotex'], states:['Telangana','Maharashtra','Madhya Pradesh']},
+  };
+  const verticals=Object.entries(CFG).map(([vert,c])=>{
+    const txnH=['Business_Category','Month_Year','Created_Date','Requisition_ID','Buyer_Name','Listing_ID','Seller_Name','Item_Names','Booked_Qty_MT','Final_Price_Per_MT','Total_Amount','Invoice_Qty_MT','Shipment_Status','Order_Status','Region','POC'];
+    const txns=[txnH];
+    for (let i=0;i<70;i++){
+      const d=new Date(t.getTime()-Math.floor(rnd()*rnd()*48)*dayMs);
+      const qty=+(5+rnd()*30).toFixed(1), price=18000+rnd()*30000;
+      const done=rnd()>0.35;
+      txns.push([vert, MONTHS[d.getMonth()]+'-'+String(d.getFullYear()).slice(2), iso(d),
+        'RE'+vert[0]+String(1000+i), c.buyers[Math.floor(rnd()*c.buyers.length)], 'LT'+vert[0]+String(2000+i),
+        c.sellers[Math.floor(rnd()*c.sellers.length)], c.mats[Math.floor(rnd()*c.mats.length)],
+        qty, Math.round(price), Math.round(qty*price), done?qty:0,
+        done?'COMPLETED':(rnd()>0.5?'DISPATCHED':'PENDING'), done?'COMPLETED':(rnd()>0.6?'DRAFT':'VERIFIED'),
+        rnd()>0.5?'South':'North', c.pocs[Math.floor(rnd()*c.pocs.length)]]);
+    }
+    const selH=['Business_Vertical','Business_Category','Region','RH_Name','Seller_Business_Name','Seller_State','Seller_Status','Created_Date','Onboarded_Date','Days_Inactive_Since_Last_Listing_Or_Onboarding','POC'];
+    const sels=[selH];
+    for (let i=0;i<26;i++){
+      const d=new Date(t.getTime()-Math.floor(rnd()*40)*dayMs);
+      const st=rnd()>0.3?'COMPLETED':(rnd()>0.5?'REVIEW_SUBMITTED':'DRAFT');
+      sels.push(['Open Marketplace', vert, rnd()>0.5?'South':'North', rnd()>0.5?'Amit Jha':'Priya Nair',
+        c.sellers[i%c.sellers.length]+(i>=c.sellers.length?' '+(1+Math.floor(i/c.sellers.length)):''),
+        c.states[Math.floor(rnd()*c.states.length)], st, iso(d), st==='COMPLETED'?iso(d):'',
+        Math.floor(rnd()*14), c.pocs[Math.floor(rnd()*c.pocs.length)]]);
+    }
+    const dem=[['POC','Seller_Business_Name','Buyer Name','Tonnage_Mt (Target)']];
+    c.pocs.forEach(p=>dem.push([p, c.sellers[0], c.buyers[0], Math.round(120+rnd()*250)]));
+    const review=[['','','','','','',''],
+      ['','OMP Daily Review — This Month vs LMTD','','','','',''],
+      ['','','','','','',''], ['','North','','','','',''],
+      ['','Metric','Target','Achieved','Ach %','LMTD','Growth'],
+      ['','Sellers Onboarded',12,8,0.67,6,0.33],['','Seller Txns',20,14,0.7,11,0.27],
+      ['','Tonnage (MT)',450,318,0.71,246,0.29],['','GMV (₹ Cr)',9.0,6.4,0.71,4.9,0.31],
+      ['','','','','','',''], ['','South','','','','',''],
+      ['','Metric','Target','Achieved','Ach %','LMTD','Growth'],
+      ['','Sellers Onboarded',15,11,0.73,9,0.22],['','Seller Txns',26,19,0.73,15,0.27],
+      ['','Tonnage (MT)',520,414,0.8,331,0.25],['','GMV (₹ Cr)',10.4,8.3,0.8,6.6,0.26],
+      ['','','','','','',''], ['','Overall Summary','','','','',''],
+      ['','Metric','Target','Achieved','Ach %','LMTD','Growth'],
+      ['','Sellers Onboarded',27,19,0.7,15,0.27],['','Seller Txns',46,33,0.72,26,0.27],
+      ['','Tonnage (MT)',970,732,0.75,577,0.27],['','GMV (₹ Cr)',19.4,14.7,0.76,11.5,0.28]];
+    return {vertical:vert, title:'OMP_'+vert+'_Demo', sheets:[
+      {name:'Daily Review', values:review},
+      {name:'Seller Onboarding', values:sels},
+      {name:'Procurement', values:txns},
+      {name:'Demand Planning', values:dem},
+    ]};
+  });
+  return {version:'demo', fetchedAt:new Date().toISOString(), verticals};
+}
+
+/* ═══ BOOT ════════════════════════════════════════════════════ */
+loadData(false);
+startPolling();
+</script>
+</body>
+</html>
