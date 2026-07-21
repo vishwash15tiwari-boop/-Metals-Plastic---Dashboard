@@ -129,6 +129,10 @@ input,select{font:inherit;color:inherit}
 }
 .clearbtn{font-size:12px;font-weight:600;color:var(--ink-2);padding:6px 10px;border-radius:8px}
 .clearbtn:hover{background:var(--line-2);color:var(--bad)}
+.morebtn{border-style:dashed}
+.morebtn .val{color:var(--ink-2);font-weight:600}
+.morebtn.on{background:var(--ink);border-style:solid}
+.morebtn.on .val{color:#fff}
 
 /* ── Layout & panels ─────────────────────────────────────────── */
 main{
@@ -444,6 +448,9 @@ const METRIC_KEYS = {
 
 const DIMS = ['region','rh','poc','seller','buyer','material','status','state'];
 const DIM_LABELS = {region:'Region', rh:'RH', poc:'POC', seller:'Seller', buyer:'Buyer', material:'Material', status:'Status', state:'State'};
+// The filter bar stays calm by default: only these show; the rest live
+// behind "More filters" (but any active filter is always kept visible).
+const PRIMARY_DIMS = ['poc','region'];
 const PRESETS = [['TODAY','Today'],['7D','7D'],['MTD','MTD'],['30D','30D'],['ALL','All']];
 
 const STUCK_DAYS = 3, INACTIVE_DAYS = 7, LOW_ACH_PCT = 50;
@@ -463,7 +470,7 @@ const state = {
   filters:{ vertical:'All', region:'', rh:'', poc:'', seller:'', buyer:'', material:'', status:'', state:'', search:'' },
   preset:'MTD', from:'', to:'',
   trendMetric:'tonnage', tmetric:'tonnage',
-  openMenu:null, grid:null, gridSearch:'', gridSort:null,
+  openMenu:null, showMore:false, grid:null, gridSearch:'', gridSort:null,
 };
 
 /* ═══ 03 HELPERS ══════════════════════════════════════════════ */
@@ -1072,21 +1079,29 @@ function renderTopbar(){
     String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+'</span>';
 }
 
+function fChip(d,F){
+  const open=state.openMenu===d;
+  const opts=OPTIONS[d]||[];
+  return '<div class="fchip '+(F[d]?'on':'')+'" data-menu="'+d+'">'+
+    '<label>'+DIM_LABELS[d]+'</label><span class="val">'+esc(F[d]||'All')+'</span>'+
+    '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>'+
+    (open?'<div class="fmenu" data-stay>'+
+      (opts.length>8?'<input placeholder="Search '+DIM_LABELS[d].toLowerCase()+'…" data-msearch autofocus>':'')+
+      '<div class="mopts"><div class="mopt '+(!F[d]?'sel':'')+'" data-fk="'+d+'" data-fv="">All</div>'+
+      opts.map(o=>'<div class="mopt '+(F[d]===o?'sel':'')+'" data-fk="'+d+'" data-fv="'+esc(o)+'">'+esc(o)+'</div>').join('')+
+      '</div></div>':'')+
+    '</div>';
+}
+
 function renderFilterbar(){
   const F=state.filters;
-  const chips=DIMS.map(d=>{
-    const open=state.openMenu===d;
-    const opts=OPTIONS[d]||[];
-    return '<div class="fchip '+(F[d]?'on':'')+'" data-menu="'+d+'">'+
-      '<label>'+DIM_LABELS[d]+'</label><span class="val">'+esc(F[d]||'All')+'</span>'+
-      '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 9l6 6 6-6"/></svg>'+
-      (open?'<div class="fmenu" data-stay>'+
-        (opts.length>8?'<input placeholder="Search '+DIM_LABELS[d].toLowerCase()+'…" data-msearch autofocus>':'')+
-        '<div class="mopts"><div class="mopt '+(!F[d]?'sel':'')+'" data-fk="'+d+'" data-fv="">All</div>'+
-        opts.map(o=>'<div class="mopt '+(F[d]===o?'sel':'')+'" data-fk="'+d+'" data-fv="'+esc(o)+'">'+esc(o)+'</div>').join('')+
-        '</div></div>':'')+
-      '</div>';
-  }).join('');
+  const moreDims=DIMS.filter(d=>!PRIMARY_DIMS.includes(d));
+  // secondary filters appear only when "More" is open, or when they're active
+  const shown=[...PRIMARY_DIMS, ...moreDims.filter(d=>state.showMore||F[d])];
+  const chips=shown.map(d=>fChip(d,F)).join('');
+  const moreBtn='<button class="fchip morebtn'+(state.showMore?' on':'')+'" data-more>'+
+    '<span class="val">'+(state.showMore?'Fewer':'More filters')+'</span>'+
+    '<svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" style="'+(state.showMore?'transform:rotate(180deg)':'')+'"><path d="M6 9l6 6 6-6"/></svg></button>';
   const presets='<div class="presets">'+PRESETS.map(p=>
     '<button class="'+(state.preset===p[0]?'on':'')+'" data-preset="'+p[0]+'">'+p[1]+'</button>').join('')+'</div>'+
     '<input type="date" class="dinput" id="d-from" value="'+esc(state.from)+'" title="From">'+
@@ -1094,7 +1109,7 @@ function renderFilterbar(){
   const search='<div class="fsearch"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>'+
     '<input id="f-search" placeholder="Search anything…" value="'+esc(F.search)+'"></div>';
   const hasAny=DIMS.some(d=>F[d])||F.search||state.preset!=='MTD';
-  $('filterbar').innerHTML=chips+presets+search+(hasAny?'<button class="clearbtn" data-clear>✕ Clear</button>':'');
+  $('filterbar').innerHTML=chips+moreBtn+presets+search+(hasAny?'<button class="clearbtn" data-clear>✕ Clear</button>':'');
 }
 
 function kpiCard(o){
@@ -1428,6 +1443,7 @@ document.addEventListener('click', e=>{
     if (k==='vertical') state.filters.vertical=v||'All'; else state.filters[k]=v;
     state.openMenu=null; closeDrawer(); render(); return;
   }
+  const more=t.closest('[data-more]'); if (more){ state.showMore=!state.showMore; state.openMenu=null; renderFilterbar(); return; }
   if (t.closest('[data-stay]')) return;
   if (menu){ state.openMenu=state.openMenu===menu.dataset.menu?null:menu.dataset.menu; renderFilterbar(); focusMenuSearch(); return; }
   if (state.openMenu){ state.openMenu=null; renderFilterbar(); }
@@ -1444,7 +1460,7 @@ document.addEventListener('click', e=>{
   if (t.closest('[data-close]')){ closeDrawer(); return; }
   if (t.closest('[data-clear]')){
     for (const d of DIMS) state.filters[d]='';
-    state.filters.search=''; state.preset='MTD'; state.from=state.to='';
+    state.filters.search=''; state.preset='MTD'; state.from=state.to=''; state.showMore=false;
     closeDrawer(); render(); return;
   }
   if (t.closest('[data-refresh]')){ loadData(true); return; }
