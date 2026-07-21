@@ -51,18 +51,17 @@ Nothing is hardcoded to a tab or column name:
 
 ## What's on the page
 
-1. Executive KPI strip (GMV, Tonnage, Transactions, Active Sellers, Onboarding, Target %, Balance, MTD vs LMTD) — every card drills down
-2. Operational Brief — auto-generated insights + business-health chips
-3. Target vs Achievement (review-tab targets; demand-plan fallback)
-4. Operational Performance — daily MTD vs LMTD trend
-5. POC Intelligence — leaderboard, plan achievement, workload, pending
-6. Region / RH / State intelligence
-7. Procurement & Shipment — status mix, realization, invoice coverage, stuck orders
-8. Seller Intelligence — funnel, new, inactive, top sellers
-9. Buyer Intelligence — top buyers, repeat buyers, payment terms
-10. Live Activity feed
-11. Attention Required — exceptions engine
-12. Data Explorer — every worksheet, filtered, sortable, exportable
+1. **KPI strip** — GMV, Tonnage, Transactions, Active Sellers, Sellers Onboarded, Target Achieved. Every card drills to its rows.
+2. **At a Glance** — the month in three plain-English lines + four business-health chips (Pace / Growth / Concentration / Data quality).
+3. **POC Scorecard — KRAs** — the centrepiece. One card per POC: achievement vs monthly plan as the hero number (green = on pace, red = behind), plus six KRAs — Tonnage, GMV, Txns, Active sellers, Onboarded, Pending. Click any card for that owner's transactions; pick a POC in the filter to scope the whole dashboard to them.
+4. **Target vs Achievement** — review-tab targets by region (demand-plan fallback).
+5. **Operational Performance** — daily MTD vs LMTD trend.
+6. **Where Volume Comes From** — tonnage by region and regional head.
+7. **Procurement & Shipment** — status mix, realization, invoice coverage, stuck orders.
+8. **Seller Intelligence** — funnel, new, inactive, top sellers.
+9. **Buyer Intelligence** — top buyers, repeat buyers, payment terms.
+10. **Attention Required** — exceptions engine (behind-plan POCs, stuck orders, inactive sellers, silent regions…).
+11. **Data Explorer** — every worksheet, filtered, sortable, CSV-exportable.
 
 Global filters: Vertical · Region · RH · POC · Seller · Buyer · Material · Status · State ·
 date presets (Today / 7D / MTD / 30D / All / custom range) · free-text search.

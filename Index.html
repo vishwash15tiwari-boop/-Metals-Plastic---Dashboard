@@ -174,6 +174,28 @@ main{
 .chip.down{background:var(--bad-bg);color:var(--bad)}
 .chip.warn{background:var(--warn-bg);color:var(--warn)}
 
+/* ── POC KRA scorecard ───────────────────────────────────────── */
+.kras{display:grid;grid-template-columns:repeat(auto-fill,minmax(268px,1fr));gap:12px}
+.kra{
+  border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;cursor:pointer;
+  background:var(--surface);transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease);
+  animation:rise .3s var(--ease);
+}
+.kra:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#d5d9df}
+.kra-top{display:flex;align-items:center;gap:10px;margin-bottom:13px}
+.kra-av{width:32px;height:32px;border-radius:9px;background:var(--ink);color:#fff;display:grid;place-items:center;font-size:11.5px;font-weight:800;flex:none;letter-spacing:.02em}
+.kra-nm{font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kra-rg{font-size:11px;color:var(--ink-3);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kra-st{margin-left:auto;flex:none;width:10px;height:10px;border-radius:50%}
+.kra-hero{display:flex;align-items:baseline;gap:7px;margin-bottom:6px}
+.kra-pct{font-size:27px;font-weight:800;letter-spacing:-.02em;line-height:1}
+.kra-goal{font-size:11.5px;color:var(--ink-3);font-weight:500}
+.kra-bar{height:7px;border-radius:99px;background:var(--line-2);overflow:hidden;margin-bottom:14px}
+.kra-fill{height:100%;border-radius:99px;transition:width .55s var(--ease)}
+.kra-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 8px}
+.kra-cv{font-size:14.5px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.kra-cl{font-size:9.5px;color:var(--ink-3);font-weight:600;letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+
 /* ── Brief / insights ────────────────────────────────────────── */
 .health{display:flex;gap:14px;flex-wrap:wrap}
 .hchip{display:flex;align-items:center;gap:7px;font-size:12px;font-weight:600;color:var(--ink-2)}
@@ -201,19 +223,11 @@ td{padding:8px 10px;border-bottom:1px solid var(--line-2);white-space:nowrap;max
 tbody tr{transition:background .12s}
 tbody tr:hover{background:#fafbfc}
 tbody tr.click{cursor:pointer}
-.rank{
-  display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;
-  font-size:10.5px;font-weight:800;background:var(--line-2);color:var(--ink-2);
-}
-.rank.r1{background:var(--ink);color:#fff}
-.rank.r2{background:#3d4450;color:#fff}
-.rank.r3{background:#828b98;color:#fff}
 .cellbar{display:flex;align-items:center;gap:8px;min-width:120px}
 .cellbar .track{flex:1;height:5px;border-radius:99px;background:var(--line-2);overflow:hidden;min-width:60px}
 .cellbar .fill{height:100%;border-radius:99px;background:var(--ink);transition:width .5s var(--ease)}
 .cellbar .fill.low{background:var(--bad)}
 .cellbar .fill.mid{background:#d99a06}
-.flag{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:6px}
 
 /* ── Bar lists / distributions ───────────────────────────────── */
 .cols{display:grid;gap:26px}
@@ -255,18 +269,7 @@ tbody tr.click{cursor:pointer}
 .ctip b{font-weight:700}
 .ctip .tt-sub{color:#aab2bd;margin-top:2px}
 
-/* ── Feed & exceptions ───────────────────────────────────────── */
-.feed{max-height:430px;overflow:auto;display:flex;flex-direction:column}
-.fev{display:flex;gap:12px;padding:9px 4px;border-bottom:1px solid var(--line-2);cursor:pointer;border-radius:8px}
-.fev:hover{background:var(--line-2)}
-.fev .fic{
-  width:28px;height:28px;border-radius:9px;background:var(--line-2);display:grid;place-items:center;
-  flex:none;font-size:10px;font-weight:800;color:var(--ink-2);letter-spacing:.02em;
-}
-.fev .fic.txn{background:var(--ink);color:#fff}
-.fev .fmain{font-size:12.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fev .fmeta{font-size:11px;color:var(--ink-3);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.fev .ftime{margin-left:auto;font-size:10.5px;color:var(--ink-3);white-space:nowrap;flex:none;padding-top:2px}
+/* ── Exceptions ──────────────────────────────────────────────── */
 .exc{display:flex;flex-direction:column;gap:8px;max-height:430px;overflow:auto}
 .xrow{
   display:flex;gap:11px;align-items:flex-start;padding:11px 13px;border:1px solid var(--line);
@@ -349,16 +352,15 @@ tbody tr.click{cursor:pointer}
 
 <main id="main">
   <section class="c12" id="s-kpi"><div class="skel" style="height:110px"></div></section>
-  <section class="c12" id="s-brief"><div class="skel" style="height:150px"></div></section>
+  <section class="c12" id="s-brief"><div class="skel" style="height:120px"></div></section>
+  <section class="c12" id="s-poc"><div class="skel" style="height:300px"></div></section>
   <section class="c12" id="s-target"><div class="skel" style="height:220px"></div></section>
   <section class="c12" id="s-trend"><div class="skel" style="height:300px"></div></section>
-  <section class="c12" id="s-poc"><div class="skel" style="height:280px"></div></section>
-  <section class="c12" id="s-region"><div class="skel" style="height:240px"></div></section>
-  <section class="c12" id="s-ops"><div class="skel" style="height:240px"></div></section>
+  <section class="c6" id="s-region"><div class="skel" style="height:260px"></div></section>
+  <section class="c6" id="s-ops"><div class="skel" style="height:260px"></div></section>
   <section class="c6" id="s-seller"><div class="skel" style="height:300px"></div></section>
   <section class="c6" id="s-buyer"><div class="skel" style="height:300px"></div></section>
-  <section class="c7" id="s-feed"><div class="skel" style="height:300px"></div></section>
-  <section class="c5" id="s-exc"><div class="skel" style="height:300px"></div></section>
+  <section class="c12" id="s-exc"><div class="skel" style="height:200px"></div></section>
   <section class="c12" id="s-grid"><div class="skel" style="height:320px"></div></section>
 </main>
 <footer class="foot" id="foot"></footer>
@@ -520,14 +522,6 @@ const fmtCrRaw = v => v==null?'—':nf(v,2);          // review sheets already s
 const fmtPct = (v,d=0) => v==null?'—':nf(v,d)+'%';
 const MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const fmtDay = d => d ? d.getDate()+' '+MONTHS[d.getMonth()] : '—';
-const fmtDT = d => d ? fmtDay(d)+', '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0') : '—';
-function timeAgo(d){
-  if(!d) return '';
-  const s=(Date.now()-d.getTime())/1000;
-  if(s<3600) return Math.max(1,Math.floor(s/60))+'m ago';
-  if(s<86400) return Math.floor(s/3600)+'h ago';
-  return Math.floor(s/86400)+'d ago';
-}
 function growthPct(cur,prev){ if(prev==null||prev===0) return null; return (cur-prev)/Math.abs(prev)*100; }
 function deltaChip(pct, suffix){
   if (pct==null) return '<span class="chip">— '+(suffix||'')+'</span>';
@@ -1058,9 +1052,9 @@ function render(){
   DRILLS=[];
   MODEL=buildModel();
   renderTopbar(); renderFilterbar();
-  renderKPIs(); renderBrief(); renderTargets(); renderTrend();
-  renderPOC(); renderRegion(); renderOps(); renderSellers(); renderBuyers();
-  renderFeed(); renderExceptions(); renderGrid();
+  renderKPIs(); renderBrief(); renderPOC(); renderTargets(); renderTrend();
+  renderRegion(); renderOps(); renderSellers(); renderBuyers();
+  renderExceptions(); renderGrid();
   $('foot').innerHTML='Single source of truth: Google Sheets · '+PARSED.sheets.length+' worksheets across '+
     MODEL.verticals.length+' workbooks · auto-sync every '+(POLL_MS/1000)+'s · snapshot '+esc(new Date(RAW.fetchedAt).toLocaleTimeString());
 }
@@ -1117,7 +1111,6 @@ function renderKPIs(){
   const mtdDrill=regDrill({title:'Transactions — MTD', sub:'Month to '+fmtDay(M.ref), recs:M.mtd});
   const activeSellers=uniq(M.txns.map(r=>r.seller));
   const gT=growthPct(M.t.mtd,M.t.lmtd), gG=growthPct(M.g.mtd,M.g.lmtd), gN=growthPct(M.n.mtd,M.n.lmtd), gO=growthPct(M.onboardMTD,M.onboardLMTD);
-  const balance=M.monthTargetT>0?Math.max(M.monthTargetT-M.t.mtd,0):null;
   const daysLeft=daysInMonth(M.ref)-M.ref.getDate();
   const cards=[
     {label:'GMV', tag:P, value:fmtCr(M.g.period), delta:deltaChip(gG,'LMTD'), spark:sparkSVG(M.series.gmv.cur,M.series.gmv.refDay), drill:txnDrill},
@@ -1125,9 +1118,7 @@ function renderKPIs(){
     {label:'Transactions', tag:P, value:fmtInt(M.n.period), delta:deltaChip(gN,'LMTD'), spark:sparkSVG(M.series.txns.cur,M.series.txns.refDay), drill:txnDrill},
     {label:'Active Sellers', tag:P, value:fmtInt(activeSellers.length), sub:fmtInt(M.sellersAll.length)+' in base', drill:regDrill({title:'Active sellers — '+P, sub:'Sellers with ≥1 transaction', recs:M.txns})},
     {label:'Sellers Onboarded', tag:P, value:fmtInt(M.sellersP.length), delta:deltaChip(gO,'LMTD'), drill:regDrill({title:'Sellers onboarded — '+P, sub:M.sellerSheets.map(s=>s.vertical+' · '+s.name).join('  |  '), recs:M.sellersP})},
-    {label:'Target Achieved', tag:'MTD', value:fmtPct(M.achPct), sub:M.targetSource?('of '+fmtT(M.monthTargetT)+' · '+M.targetSource):'no target found', drill:mtdDrill},
-    {label:'Balance to Target', tag:'MTD', value:balance==null?'—':fmtT(balance), sub:daysLeft+' days left', drill:mtdDrill},
-    {label:'MTD vs LMTD', tag:'MTD', value:(gT==null?'—':(gT>=0?'+':'')+nf(gT,gT!=null&&Math.abs(gT)<10?1:0)+'%'), sub:'GMV '+(gG==null?'—':(gG>=0?'+':'')+nf(gG,0)+'%'), drill:mtdDrill},
+    {label:'Target Achieved', tag:'MTD', value:fmtPct(M.achPct), sub:M.targetSource?('of '+fmtT(M.monthTargetT)+' · '+daysLeft+'d left'):'no target found', drill:mtdDrill},
   ];
   $('s-kpi').innerHTML='<div class="kpis">'+cards.map(kpiCard).join('')+'</div>';
 }
@@ -1136,26 +1127,11 @@ function renderBrief(){
   const M=MODEL, L=[];
   const elapsed=M.ref.getDate()/daysInMonth(M.ref)*100;
   const gT=growthPct(M.t.mtd,M.t.lmtd);
-  L.push('<b>'+fmtCr(M.g.mtd)+'</b> GMV on <b>'+fmtT(M.t.mtd)+'</b> across <b>'+fmtInt(M.n.mtd)+'</b> transactions MTD'+
-    (gT!=null?' — tonnage '+(gT>=0?'up <b>'+nf(gT,0)+'%</b>':'down <b>'+nf(-gT,0)+'%</b>')+' vs LMTD.':'.'));
-  if (M.achPct!=null) L.push('Month is <b>'+nf(elapsed,0)+'%</b> elapsed; tonnage plan is <b>'+nf(M.achPct,0)+'%</b> achieved — balance <b>'+fmtT(Math.max(M.monthTargetT-M.t.mtd,0))+'</b>.');
-  if (M.byRegion.length){
-    const top=M.byRegion[0], share=M.t.period?top.tonnage/M.t.period*100:0;
-    L.push('<b>'+esc(top.k)+'</b> leads with <b>'+fmtT(top.tonnage)+'</b> ('+nf(share,0)+'% of volume)'+
-      (M.byRegion.length>1?'; '+esc(M.byRegion[M.byRegion.length-1].k)+' is the softest region.':'.'));
-  }
-  if (M.pocRows.length){
-    const t=M.pocRows[0];
-    L.push('Top POC: <b>'+esc(t.poc)+'</b> — '+fmtT(t.tonnage)+', '+fmtCr(t.gmv)+', '+t.sellersActive+' active sellers.'+
-      (M.lowPocs.length?' <b>'+M.lowPocs.length+'</b> POC'+(M.lowPocs.length>1?'s are':' is')+' below '+LOW_ACH_PCT+'% of plan.':''));
-  }
-  if (M.byMaterial.length){
-    const m=M.byMaterial[0], share=M.t.period?m.tonnage/M.t.period*100:0;
-    L.push('Top material: <b>'+esc(m.k)+'</b> at '+nf(share,0)+'% of tonnage.');
-  }
-  L.push('<b>'+fmtInt(M.sellersP.length)+'</b> sellers onboarded in period; <b>'+fmtInt(M.inactive.length)+'</b> inactive ≥ '+INACTIVE_DAYS+' days.');
+  L.push('<b>'+fmtCr(M.g.mtd)+'</b> GMV on <b>'+fmtT(M.t.mtd)+'</b> across <b>'+fmtInt(M.n.mtd)+'</b> transactions this month'+
+    (gT!=null?', tonnage '+(gT>=0?'up <b>'+nf(gT,0)+'%</b>':'down <b>'+nf(-gT,0)+'%</b>')+' vs last month.':'.'));
+  if (M.achPct!=null) L.push('At <b>'+nf(elapsed,0)+'%</b> of the month, plan is <b>'+nf(M.achPct,0)+'%</b> achieved — <b>'+fmtT(Math.max(M.monthTargetT-M.t.mtd,0))+'</b> still to go.');
   const hi=M.exceptions.filter(x=>x.sev==='hi').length;
-  L.push(M.exceptions.length?('<b>'+M.exceptions.length+'</b> attention item'+(M.exceptions.length>1?'s':'')+(hi?' — <b>'+hi+'</b> high priority.':'.')):'No open exceptions — book is clean.');
+  L.push(M.exceptions.length?('<b>'+M.exceptions.length+'</b> item'+(M.exceptions.length>1?'s':'')+' need attention'+(hi?', <b style="color:var(--bad)">'+hi+'</b> high priority — see below.':'.')):'Nothing needs attention — the book is clean.');
 
   const topBuyerShare=M.byBuyer.length&&M.g.period?M.byBuyer[0].gmv/M.g.period*100:0;
   const H=[
@@ -1164,7 +1140,7 @@ function renderBrief(){
     ['Concentration', topBuyerShare>60?'r':topBuyerShare>40?'a':'g'],
     ['Data quality', M.errTotal?'a':'g'],
   ];
-  $('s-brief').innerHTML=panel('Operational Brief','Generated from live sheet data · '+esc(new Date(RAW.fetchedAt).toLocaleTimeString()),
+  $('s-brief').innerHTML=panel('At a Glance','The month in three lines · live from Google Sheets',
     '<div class="health" style="margin-bottom:6px">'+H.map(h=>'<div class="hchip"><span class="hdot '+h[1]+'"></span>'+h[0]+'</div>').join('')+'</div>'+
     '<ul class="insights">'+L.map(l=>'<li><span>'+l+'</span></li>').join('')+'</ul>');
 }
@@ -1243,34 +1219,42 @@ function trendHover(e){
 
 function renderPOC(){
   const M=MODEL;
-  if (!M.pocRows.length){ $('s-poc').innerHTML=panel('POC Intelligence','Who is delivering, who needs help?','<div class="empty">No POC-tagged records for the current filters</div>'); return; }
-  const rows=M.pocRows.map((p,i)=>{
-    const id=regDrill({title:'POC — '+p.poc, sub:'MTD transactions · '+fmtT(p.tonnage)+' · '+fmtCr(p.gmv), recs:p.recs});
-    const cls=p.achPct==null?'':p.achPct<LOW_ACH_PCT?'low':p.achPct<90?'mid':'';
-    return '<tr class="click" data-drill="'+id+'">'+
-      '<td><span class="rank r'+(i+1<=3?i+1:'')+'">'+(i+1)+'</span></td>'+
-      '<td style="font-weight:600">'+(p.plan>0&&p.achPct<LOW_ACH_PCT?'<span class="flag" style="background:var(--bad)"></span>':'')+esc(p.poc)+'</td>'+
-      '<td>'+esc(p.region||'—')+'</td>'+
-      '<td class="num">'+fmtInt(p.txnN)+'</td><td class="num">'+fmtT(p.tonnage)+'</td><td class="num">'+fmtCr(p.gmv)+'</td>'+
-      '<td class="num">'+fmtInt(p.sellersActive)+'</td><td class="num">'+fmtInt(p.onboarded)+'</td><td class="num">'+fmtInt(p.book)+'</td>'+
-      '<td class="num">'+(p.plan>0?fmtT(p.plan):'—')+'</td>'+
-      '<td><div class="cellbar"><div class="track"><div class="fill '+cls+'" style="width:'+Math.min(p.achPct||0,100)+'%"></div></div>'+
-      '<span class="num" style="font-size:11px;font-weight:700">'+fmtPct(p.achPct)+'</span></div></td>'+
-      '<td class="num">'+(p.pending?'<span class="chip warn">'+p.pending+'</span>':'<span style="color:var(--ink-3)">0</span>')+'</td></tr>';
+  if (!M.pocRows.length){ $('s-poc').innerHTML=panel('POC Scorecard','KRAs by owner — delivery against monthly plan','<div class="empty">No POC-tagged records for the current filters</div>'); return; }
+  const elapsed=M.ref.getDate()/daysInMonth(M.ref)*100;
+  const withPlan=M.pocRows.filter(p=>p.plan>0);
+  const onTrack=withPlan.filter(p=>p.achPct>=elapsed*0.9).length;
+  const behind=withPlan.filter(p=>p.achPct<elapsed*0.5).length;
+  const cards=M.pocRows.map(p=>{
+    const id=regDrill({title:'POC — '+p.poc, sub:'MTD delivery · '+fmtT(p.tonnage)+' · '+fmtCr(p.gmv)+' · '+p.sellersActive+' active sellers', recs:p.recs});
+    const has=p.plan>0;
+    const st=!has?'n':(p.achPct>=elapsed*0.9?'g':p.achPct>=elapsed*0.5?'a':'r');
+    const stc=st==='g'?'var(--good)':st==='a'?'#d99a06':st==='r'?'var(--bad)':'var(--ink-3)';
+    const ini=(p.poc.match(/\b\w/g)||['?']).slice(0,2).join('').toUpperCase();
+    const kra=(v,l,warn)=>'<div><div class="kra-cv num"'+(warn?' style="color:var(--bad)"':'')+'>'+v+'</div><div class="kra-cl">'+l+'</div></div>';
+    return '<article class="kra" data-drill="'+id+'">'+
+      '<div class="kra-top"><div class="kra-av">'+esc(ini)+'</div>'+
+        '<div style="min-width:0"><div class="kra-nm" title="'+esc(p.poc)+'">'+esc(p.poc)+'</div>'+
+        '<div class="kra-rg">'+esc(p.region||'Region —')+'</div></div>'+
+        '<span class="kra-st" style="background:'+stc+'" title="'+(st==='g'?'On pace':st==='a'?'Watch':st==='r'?'Behind plan':'No plan set')+'"></span></div>'+
+      '<div class="kra-hero"><span class="kra-pct" style="color:'+stc+'">'+(has?nf(p.achPct,0)+'%':'—')+'</span>'+
+        '<span class="kra-goal">'+(has?'of '+fmtT(p.plan)+' plan':'no plan set')+'</span></div>'+
+      '<div class="kra-bar"><div class="kra-fill" style="width:'+Math.min(has?p.achPct:0,100)+'%;background:'+stc+'"></div></div>'+
+      '<div class="kra-grid">'+
+        kra(fmtT(p.tonnage),'Tonnage')+kra(fmtCr(p.gmv),'GMV')+kra(fmtInt(p.txnN),'Txns')+
+        kra(fmtInt(p.sellersActive),'Active')+kra(fmtInt(p.onboarded),'Onboarded')+kra(fmtInt(p.pending),'Pending',p.pending>0)+
+      '</div></article>';
   }).join('');
-  $('s-poc').innerHTML=panel('POC Intelligence','Leaderboard — MTD delivery vs plan, workload and pending follow-ups',
-    '<div class="twrap"><table><thead><tr><th>#</th><th>POC</th><th>Region</th><th class="num">Txns</th><th class="num">Tonnage</th>'+
-    '<th class="num">GMV</th><th class="num">Active Sellers</th><th class="num">Onboarded</th><th class="num">Book</th>'+
-    '<th class="num">Plan</th><th style="min-width:140px">Achievement</th><th class="num">Pending</th></tr></thead><tbody>'+rows+'</tbody></table></div>');
+  const sub=nf(elapsed,0)+'% of month elapsed · '+onTrack+' on pace · '+(behind?'<b style="color:var(--bad)">'+behind+' behind</b>':'0 behind')+
+    ' · click any card for their transactions';
+  $('s-poc').innerHTML=panel('POC Scorecard — KRAs','Each owner vs monthly plan · '+sub,'<div class="kras">'+cards+'</div>');
 }
 
 function renderRegion(){
   const M=MODEL, P=periodLabel();
-  $('s-region').innerHTML=panel('Region Intelligence','Where the volume is — by region, regional head and state · '+P,
-    '<div class="cols c3">'+
-    '<div><div class="coltitle">By Region</div>'+barList(M.byRegion,{drillLabel:'Region'})+'</div>'+
-    '<div><div class="coltitle">By Regional Head</div>'+barList(M.byRH,{drillLabel:'RH'})+'</div>'+
-    '<div><div class="coltitle">By State</div>'+barList(M.byState,{drillLabel:'State',max:8})+'</div>'+
+  $('s-region').innerHTML=panel('Where Volume Comes From','Tonnage by region and regional head · '+P,
+    '<div class="cols c2">'+
+    '<div><div class="coltitle">By Region</div>'+barList(M.byRegion,{drillLabel:'Region',max:7})+'</div>'+
+    '<div><div class="coltitle">By Regional Head</div>'+barList(M.byRH,{drillLabel:'RH',max:7})+'</div>'+
     '</div>');
 }
 
@@ -1333,26 +1317,6 @@ function renderBuyers(){
   $('s-buyer').innerHTML=panel('Buyer Intelligence','Demand side — who is lifting material',
     '<div class="statrow">'+stats.map(s=>'<div class="stat" data-drill="'+s[2]+'"><div class="sv num">'+s[1]+'</div><div class="sl">'+s[0]+'</div></div>').join('')+'</div>'+
     '<div class="coltitle">Top buyers by volume · '+periodLabel()+'</div>'+barList(M.byBuyer,{drillLabel:'Buyer',max:7})+payHtml);
-}
-
-function renderFeed(){
-  const M=MODEL;
-  const evs=[];
-  for (const r of M.txnsAll) if (r.date) evs.push({d:r.date, kind:'txn', r,
-    main:(r.id?r.id+' — ':'')+ (r.seller||'?')+' → '+(r.buyer||'?'),
-    meta:[fmtT(r.tonnage),fmtCr(r.gmv),r.region,r.poc&&'POC '+r.poc,r.vertical].filter(Boolean).join(' · ')});
-  for (const r of M.sellersAll){ const d=r.onboarded||r.date; if (d) evs.push({d, kind:'new', r,
-    main:'Seller '+(bucketOf(r.status)==='done'?'onboarded':'added')+' — '+r.seller,
-    meta:[r.region,r.state,r.poc&&'POC '+r.poc,r.vertical].filter(Boolean).join(' · ')}); }
-  evs.sort((a,b)=>b.d-a.d);
-  const rows=evs.slice(0,30).map(e=>{
-    const id=regDrill({title:e.main, sub:fmtDT(e.d), recs:[e.r]});
-    return '<div class="fev" data-drill="'+id+'"><div class="fic '+(e.kind==='txn'?'txn':'')+'">'+(e.kind==='txn'?'TX':'S+')+'</div>'+
-      '<div style="min-width:0"><div class="fmain">'+esc(e.main)+'</div><div class="fmeta">'+esc(e.meta)+'</div></div>'+
-      '<div class="ftime">'+timeAgo(e.d)+'</div></div>';
-  }).join('');
-  $('s-feed').innerHTML=panel('Live Activity','Latest movements across both books',
-    rows?'<div class="feed">'+rows+'</div>':'<div class="empty">No dated activity found</div>');
 }
 
 function renderExceptions(){
