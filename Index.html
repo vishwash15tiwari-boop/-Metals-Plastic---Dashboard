@@ -6,7 +6,10 @@
 <title>OMP Control Tower</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<!-- Fonts load async so first paint NEVER waits on the network — the page
+     renders instantly in the system font, then upgrades to Inter when ready. -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"></noscript>
 <style>
 /* ════════════════════════════════════════════════════════════════
    OMP EXECUTIVE CONTROL TOWER — DESIGN SYSTEM
@@ -144,9 +147,10 @@ main{
 .panel{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);padding:20px 22px;transition:box-shadow .2s var(--ease);
-  animation:rise .3s var(--ease);
 }
-@keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes mainfade{from{opacity:.6}to{opacity:1}}
 .p-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:16px}
 .p-head h2{font-size:14.5px}
 .p-head p{font-size:12px;color:var(--ink-3);margin-top:2px}
@@ -165,7 +169,7 @@ main{
 .kpi{
   background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);padding:15px 16px 13px;cursor:pointer;position:relative;
-  transition:all .18s var(--ease);animation:rise .3s var(--ease);
+  transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease);
 }
 .kpi:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#d5d9df}
 .kpi .lbl{font-size:11px;font-weight:600;color:var(--ink-2);letter-spacing:.02em;display:flex;justify-content:space-between;gap:6px}
@@ -183,7 +187,6 @@ main{
 .kra{
   border:1px solid var(--line);border-radius:var(--r);padding:15px 16px;cursor:pointer;
   background:var(--surface);transition:transform .18s var(--ease),box-shadow .18s var(--ease),border-color .18s var(--ease);
-  animation:rise .3s var(--ease);
 }
 .kra:hover{transform:translateY(-2px);box-shadow:var(--shadow-2);border-color:#d5d9df}
 .kra-top{display:flex;align-items:center;gap:10px;margin-bottom:13px}
@@ -333,6 +336,42 @@ tbody tr.click{cursor:pointer}
   main{padding:14px;gap:12px}.brand p{display:none}.seg button{padding:5px 10px}
   .kpi .val{font-size:19px}.drawer{width:100vw}
 }
+
+/* ── Motion system ───────────────────────────────────────────────
+   Entrance plays ONCE on first load (while #main has no .booted).
+   After boot, filter changes update instantly with only a soft fade —
+   so interactions stay crisp instead of re-animating the whole page. */
+@media (prefers-reduced-motion: no-preference){
+  #main:not(.booted) > section:not(#s-poc) > .panel{animation:rise .5s var(--ease) both}
+  #main:not(.booted) > section:nth-child(2) > .panel{animation-delay:.04s}
+  #main:not(.booted) > section:nth-child(4) > .panel{animation-delay:.13s}
+  #main:not(.booted) > section:nth-child(5) > .panel{animation-delay:.18s}
+  #main:not(.booted) > section:nth-child(6) > .panel{animation-delay:.23s}
+  #main:not(.booted) > section:nth-child(7) > .panel{animation-delay:.27s}
+  #main:not(.booted) > section:nth-child(8) > .panel{animation-delay:.31s}
+  #main:not(.booted) > section:nth-child(9) > .panel{animation-delay:.34s}
+  #main:not(.booted) > section:nth-child(10) > .panel{animation-delay:.37s}
+  #main:not(.booted) > section:nth-child(11) > .panel{animation-delay:.40s}
+  #main:not(.booted) .kpi,#main:not(.booted) .kra{animation:pop .46s var(--ease) both}
+  #main:not(.booted) .kpi:nth-child(1){animation-delay:.03s}
+  #main:not(.booted) .kpi:nth-child(2){animation-delay:.07s}
+  #main:not(.booted) .kpi:nth-child(3){animation-delay:.11s}
+  #main:not(.booted) .kpi:nth-child(4){animation-delay:.15s}
+  #main:not(.booted) .kpi:nth-child(5){animation-delay:.19s}
+  #main:not(.booted) .kpi:nth-child(6){animation-delay:.23s}
+  #main:not(.booted) .kra:nth-child(1){animation-delay:.12s}
+  #main:not(.booted) .kra:nth-child(2){animation-delay:.17s}
+  #main:not(.booted) .kra:nth-child(3){animation-delay:.22s}
+  #main:not(.booted) .kra:nth-child(4){animation-delay:.27s}
+  #main:not(.booted) .kra:nth-child(5){animation-delay:.32s}
+  #main:not(.booted) .kra:nth-child(6){animation-delay:.37s}
+  #main:not(.booted) .kra:nth-child(n+7){animation-delay:.42s}
+  /* soft pulse when data updates after boot (filter change / live sync) */
+  #main.booted.pulse{animation:mainfade .22s var(--ease)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001ms!important;animation-delay:0!important;transition-duration:.001ms!important}
+}
 </style>
 </head>
 <body>
@@ -465,6 +504,8 @@ let MODEL = null;      // everything computed
 let OPTIONS = {};      // filter dropdown options
 let DRILLS = [];       // drill-down payloads for this render
 let TREND = null;      // hover data for the trend chart
+let BOOTED = false;    // first-load entrance animation plays once
+let BOOT_T = null;
 
 const state = {
   filters:{ vertical:'All', region:'', rh:'', poc:'', seller:'', buyer:'', material:'', status:'', state:'', search:'' },
@@ -1064,6 +1105,19 @@ function render(){
   renderExceptions(); renderGrid();
   $('foot').innerHTML='Single source of truth: Google Sheets · '+PARSED.sheets.length+' worksheets across '+
     MODEL.verticals.length+' workbooks · auto-sync every '+(POLL_MS/1000)+'s · snapshot '+esc(new Date(RAW.fetchedAt).toLocaleTimeString());
+  motionTick();
+}
+
+// Entrance animations run once on first paint; every render after boot gets
+// a quick, cheap opacity pulse so updates feel alive without re-animating.
+function motionTick(){
+  const m=$('main');
+  if (!BOOTED){
+    clearTimeout(BOOT_T);
+    BOOT_T=setTimeout(()=>{ m.classList.add('booted'); BOOTED=true; }, 1150);
+    return;
+  }
+  m.classList.remove('pulse'); void m.offsetWidth; m.classList.add('pulse');
 }
 
 function panel(title, sub, body, actions){
