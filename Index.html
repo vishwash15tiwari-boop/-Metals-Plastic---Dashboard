@@ -47,8 +47,7 @@ input,select{font:inherit;color:inherit}
 /* ── Top bar ─────────────────────────────────────────────────── */
 .topbar{
   position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:18px;
-  padding:10px 28px;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+  padding:10px 28px;background:rgba(255,255,255,.97);border-bottom:1px solid var(--line);
 }
 .brand{display:flex;align-items:center;gap:12px;min-width:0}
 .mark{
@@ -83,8 +82,7 @@ input,select{font:inherit;color:inherit}
 /* ── Filter bar ──────────────────────────────────────────────── */
 .filterbar{
   position:sticky;top:55px;z-index:50;display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-  padding:10px 28px;background:rgba(247,247,248,.88);backdrop-filter:blur(14px);
-  -webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line);
+  padding:10px 28px;background:rgba(247,247,248,.98);border-bottom:1px solid var(--line);
 }
 .fchip{
   position:relative;display:flex;align-items:center;gap:7px;padding:6px 11px;
@@ -136,6 +134,18 @@ input,select{font:inherit;color:inherit}
 .morebtn .val{color:var(--ink-2);font-weight:600}
 .morebtn.on{background:var(--ink);border-style:solid}
 .morebtn.on .val{color:#fff}
+
+/* ── Connected-sources bar (proof the live data flowed) ──────── */
+#s-src{max-width:1560px;margin:0 auto;padding:14px 28px 0}
+.srcbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.srcpill{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 12px;font-size:12px;box-shadow:var(--shadow)}
+.srcpill .sdot{width:8px;height:8px;border-radius:50%;background:var(--good);flex:none}
+.srcpill.demo .sdot{background:#d99a06}
+.srcpill b{font-weight:700;color:var(--ink);max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.srcpill .meta{color:var(--ink-3);white-space:nowrap}
+.srcstat{margin-left:auto;font-size:12px;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.srcstat b{font-weight:700}
+@media(max-width:760px){#s-src{padding:10px 14px 0}.srcstat{margin-left:0;width:100%}}
 
 /* ── Layout & panels ─────────────────────────────────────────── */
 main{
@@ -299,8 +309,8 @@ tbody tr.click{cursor:pointer}
 
 /* ── Drawer (drill-down) ─────────────────────────────────────── */
 .scrim{
-  position:fixed;inset:0;background:rgba(15,17,21,.32);z-index:80;opacity:0;pointer-events:none;
-  transition:opacity .22s var(--ease);backdrop-filter:blur(2px);
+  position:fixed;inset:0;background:rgba(15,17,21,.36);z-index:80;opacity:0;pointer-events:none;
+  transition:opacity .22s var(--ease);
 }
 .scrim.open{opacity:1;pointer-events:auto}
 .drawer{
@@ -392,6 +402,7 @@ tbody tr.click{cursor:pointer}
 </header>
 
 <div class="filterbar" id="filterbar"></div>
+<div id="s-src"></div>
 
 <main id="main">
   <section class="c12" id="s-kpi"><div class="skel" style="height:110px"></div></section>
@@ -1099,7 +1110,7 @@ function render(){
   if (!PARSED) return;
   DRILLS=[];
   MODEL=buildModel();
-  renderTopbar(); renderFilterbar();
+  renderTopbar(); renderFilterbar(); renderSources();
   renderKPIs(); renderBrief(); renderPOC(); renderTargets(); renderTrend();
   renderRegion(); renderOps(); renderSellers(); renderBuyers();
   renderExceptions(); renderGrid();
@@ -1125,11 +1136,37 @@ function panel(title, sub, body, actions){
     (actions?'<div class="p-actions">'+actions+'</div>':'')+'</div>'+body+'</div>';
 }
 
+// What actually came back from the sheets — one entry per workbook,
+// with the real title and how many tabs / rows were read.
+function sourceSummary(){
+  const byV={};
+  for (const s of PARSED.sheets){
+    const d=byV[s.vertical]=byV[s.vertical]||{vertical:s.vertical, title:s.vertical, tabs:0, rows:0};
+    d.tabs++; d.rows+=(s.values&&s.values.length)||0;
+  }
+  (RAW.verticals||[]).forEach(v=>{ if(byV[v.vertical]){ byV[v.vertical].title=v.title||v.vertical; byV[v.vertical].error=v.error; } });
+  return Object.values(byV);
+}
+
+function renderSources(){
+  const src=sourceSummary();
+  const pills=src.map(s=>'<div class="srcpill'+(IS_GAS?'':' demo')+'" title="'+esc(s.title)+'">'+
+    '<span class="sdot"></span><b>'+esc(s.title)+'</b>'+
+    '<span class="meta">'+s.tabs+' tabs · '+nf(s.rows,0)+' rows'+(s.error?' · ⚠ error':'')+'</span></div>').join('');
+  const stat=IS_GAS
+    ? '<span style="color:var(--good)">●</span> <b>Live</b> — reading your Google Sheets, auto-syncing every '+(POLL_MS/1000)+'s'
+    : '<span style="color:var(--warn)">●</span> <b>Demo data</b> — deploy to Apps Script to connect these live';
+  $('s-src').innerHTML='<div class="srcbar">'+pills+'<span class="srcstat">'+stat+'</span></div>';
+}
+
 function renderTopbar(){
   const vs=['All',...MODEL.verticals];
   $('vseg').innerHTML=vs.map(v=>'<button class="'+(state.filters.vertical===v?'on':'')+'" data-fk="vertical" data-fv="'+esc(v)+'">'+esc(v)+'</button>').join('');
   const t=new Date(RAW.fetchedAt);
-  $('sync').innerHTML='<span class="dot pulse"></span><span>'+(IS_GAS?'Live':'Demo')+' · synced '+
+  const src=sourceSummary();
+  const tip=src.map(s=>s.title+' — '+s.tabs+' tabs, '+nf(s.rows,0)+' rows').join('\n');
+  $('sync').innerHTML='<span class="dot pulse"></span><span title="'+esc(tip)+'">'+(IS_GAS?'Live':'Demo')+' · '+
+    src.length+' sheet'+(src.length>1?'s':'')+' · '+
     String(t.getHours()).padStart(2,'0')+':'+String(t.getMinutes()).padStart(2,'0')+'</span>';
 }
 

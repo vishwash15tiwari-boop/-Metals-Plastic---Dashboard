@@ -13,6 +13,26 @@ single source of truth, and adapts automatically when tabs or columns are added.
 
 ---
 
+## See it in 10 seconds (no setup)
+
+**Double-click `Index.html`** — it opens in your browser and runs the full,
+interactive dashboard on built-in **demo data**. Every section, filter, drill-down
+and animation works. This is the UI you'll get; only the numbers change once it's
+connected to your live sheets.
+
+> **How do I know it's reading my sheets?** A **connected-sources bar** sits under the
+> filters. In demo it shows the sample workbooks; once deployed it shows *your* real
+> workbook titles with live tab and row counts, and the status flips to **● Live**.
+> That bar is your proof the data flowed.
+
+## Why the live data only appears after deploying
+
+The dashboard reads your sheets through Google Apps Script (`SpreadsheetApp`),
+which runs **inside your Google account**. That's the only place with permission to
+open your private workbooks — so the live read happens in the deployed web app, not
+when the file is opened standalone (which is why standalone shows demo data). Deploy
+once (below) and it's live and auto-syncing.
+
 ## Deploy (5 minutes)
 
 1. Open [script.google.com](https://script.google.com) → **New project** (use the Google account that has access to both sheets).
