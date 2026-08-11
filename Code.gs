@@ -20,14 +20,17 @@ var SOURCES = [
   { vertical: 'Plastic', id: '1glt36fhT1c5U-eE3-gRBfC2cMTnR289LbQBvuXF-CEc' }
 ];
 
-var CACHE_SECONDS       = 120;   // one snapshot is served from cache for this long
+// Snapshots are cached long (max allowed = 6h). Freshness is NOT sacrificed:
+// the client polls getVersion() every 60s and forces a re-read the instant the
+// sheets change — so between edits, every load is served fast from cache.
+var CACHE_SECONDS       = 21600; // 6 hours
 var MAX_ROWS_PER_SHEET  = 5000;  // safety cap so a huge tab cannot break the payload
 
 
 /** Serves the dashboard. */
 function doGet() {
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('OMP Control Tower')
+    .setTitle('KRA / KPI Tracker (Operations)')
     .addMetaTag('viewport', 'width=device-width, initial-scale=1')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL);
 }

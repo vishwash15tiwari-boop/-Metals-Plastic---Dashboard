@@ -1,4 +1,4 @@
-# OMP Executive Control Tower — Metals & Plastics
+# KRA / KPI Tracker (Operations) — Metals & Plastics
 
 A single-page **Executive Operations Control Tower** for the Open Marketplace (OMP) team.
 It connects live to the two Google Sheets workbooks (Metal + Plastic), treats them as the
